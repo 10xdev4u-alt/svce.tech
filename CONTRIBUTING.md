@@ -76,7 +76,10 @@ Append to `src/data/opportunities.json`:
 - [ ] Dates are in the future and valid
 - [ ] Links are real and accessible
 - [ ] No fake or placeholder data — only real events/opportunities
-- [ ] Run `pnpm validate:events` and `pnpm validate:communities`
+- [ ] Run `pnpm validate:data` — this checks dates, links, and field schemas
+
+> CI runs `pnpm validate:data`, `pnpm lint` and `pnpm build` on every pull request, so a bad
+> entry can never break the site.
 
 ## 💬 Commit Message Style
 

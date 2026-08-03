@@ -11,8 +11,8 @@
     "lint": "next lint && eslint . --max-warnings 0",
     "format:check": "prettier --cache --check --ignore-path .gitignore --ignore-path .prettierignore .",
     "format:write": "prettier --cache --write --list-different --ignore-path .gitignore --ignore-path .prettierignore .",
-    "validate:events": "node -e \"const events = require('./src/data/events.json'); console.log('✅ events.json is valid JSON with', events.length, 'events')\"",
-    "validate:communities": "node -e \"const communities = require('./src/data/communities.json'); console.log('✅ communities.json is valid JSON with', communities.length, 'communities')\""
+    "validate:data": "node scripts/validate-data.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.7",
