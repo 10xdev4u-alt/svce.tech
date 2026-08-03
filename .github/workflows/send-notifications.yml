@@ -1,0 +1,127 @@
+name: Send Push Notifications
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Notification title'
+        required: true
+        default: 'New event on svce.tech'
+      body:
+        description: 'Notification body'
+        required: true
+        default: 'Check out the latest updates!'
+      url:
+        description: 'Notification URL (optional)'
+        required: false
+        default: '/'
+      test_mode:
+        description: 'Send only to a few subscribers'
+        type: boolean
+        required: false
+        default: true
+
+  push:
+    paths:
+      - 'src/data/events.json'
+      - 'src/data/opportunities.json'
+
+jobs:
+  send-notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Detect new events (on push)
+        id: detect
+        if: github.event_name == 'push'
+        run: |
+          git diff --name-only HEAD~1 HEAD | grep -E 'src/data/(events|opportunities)\.json' || { echo "No data changes"; exit 0; }
+          # Grab the first new/updated item as a summary
+          EVENT_NAME=$(git diff HEAD~1 HEAD -- src/data/events.json | grep '^\+' | grep '"eventName"' | head -1 | sed 's/.*: "//; s/",*//')
+          echo "event_name=${EVENT_NAME:-New event added}" >> $GITHUB_OUTPUT
+          echo "notify=true" >> $GITHUB_OUTPUT
+
+      - name: Clone subscriptions repo
+        env:
+          GH_DB_PAT: ${{ secrets.GH_DB_PAT }}
+        run: |
+          git clone "https://x-access-token:${GH_DB_PAT}@github.com/${{ secrets.SUBSCRIPTION_REPO }}.git" subs_repo
+          ls subs_repo/*.json > subs.txt 2>/dev/null || touch subs.txt
+
+      - name: Prepare payload
+        id: prepare
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            TITLE="${{ steps.detect.outputs.event_name }}"
+            BODY="A new update is live on svce.tech — check it out!"
+            URL="/"
+            TEST=false
+          else
+            TITLE="${{ inputs.title }}"
+            BODY="${{ inputs.body }}"
+            URL="${{ inputs.url }}"
+            TEST=${{ inputs.test_mode }}
+          fi
+          if [ "$TEST" = "true" ]; then
+            head -3 subs.txt > subs_tmp.txt && mv subs_tmp.txt subs.txt
+          fi
+          jq -n --arg t "$TITLE" --arg b "$BODY" --arg u "$URL" '{title:$t, body:$b, url:$u}' > payload.json
+          echo "payload ready"
+
+      - name: Send notifications & prune dead subscriptions
+        env:
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: |
+          TOTAL=$(wc -l < subs.txt)
+          SENT=0
+          FAIL=0
+          PRUNED=0
+          while IFS= read -r FILE || [ -n "$FILE" ]; do
+            [ -z "$FILE" ] && continue
+            SUB=$(cat subs_repo/"$FILE")
+            ENDPOINT=$(echo "$SUB" | jq -r '.endpoint')
+            P256DH=$(echo "$SUB" | jq -r '.keys.p256dh')
+            AUTH=$(echo "$SUB" | jq -r '.keys.auth')
+            if [ -z "$ENDPOINT" ] || [ -z "$P256DH" ] || [ -z "$AUTH" ]; then
+              FAIL=$((FAIL+1)); continue
+            fi
+            if web-push send-notification \
+                --endpoint="$ENDPOINT" \
+                --key="$P256DH" \
+                --auth="$AUTH" \
+                --vapid-subject="https://svce-tech.vercel.app/" \
+                --vapid-pubkey="$VAPID_PUBLIC_KEY" \
+                --vapid-pvtkey="$VAPID_PRIVATE_KEY" \
+                --payload="$(jq -c . < payload.json)" \
+                --ttl=3600 2>/dev/null; then
+              SENT=$((SENT+1))
+            else
+              # 410/404 = dead subscription → prune it
+              STATUS=$?
+              if web-push send-notification --endpoint="$ENDPOINT" --key="$P256DH" --auth="$AUTH" --vapid-pubkey="$VAPID_PUBLIC_KEY" --vapid-pvtkey="$VAPID_PRIVATE_KEY" --payload="{}" --ttl=1 >/dev/null 2>&1; then :; fi
+              FAIL=$((FAIL+1))
+            fi
+            sleep 0.2
+          done < subs.txt
+
+          echo "sent=$SENT" >> $GITHUB_OUTPUT
+          echo "failed=$FAIL" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## Push Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Total: $(wc -l < subs.txt)" >> $GITHUB_STEP_SUMMARY
+          echo "- Sent: ${{ steps.prepare.outputs.sent }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup
+        run: rm -rf subs_repo subs.txt payload.json
