@@ -1,0 +1,52 @@
+[
+  {
+    "name": "IEEE SVCE Student Branch",
+    "description": "IEEE student branch at Sri Venkateswara College of Engineering. Part of the IEEE Madras Section, organizing technical events, workshops, and industry talks on campus.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "CSI SVCE Student Chapter",
+    "description": "Computer Society of India student chapter focused on computer science activities, coding events, and technology awareness programs.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "ACM SVCE Student Chapter",
+    "description": "Association for Computing Machinery student chapter promoting computing education, research, and community activities.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "IETE SVCE Student Forum",
+    "description": "Institution of Electronics and Telecommunication Engineers student forum organizing electronics and communication focused events.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "ISTE SVCE Student Chapter",
+    "description": "Indian Society for Technical Education student chapter working on technical education improvement activities.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "ISTD SVCE Student Chapter",
+    "description": "Indian Society for Training and Development student chapter focused on soft skills, training, and development activities.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "EWB SVCE Chapter",
+    "description": "Engineers Without Borders student chapter applying engineering to address societal challenges.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "AEEE SVCE Association",
+    "description": "Association of Electrical and Electronics Engineers student association for electrical and electronics engineering activities.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "ACT SVCE",
+    "description": "Association of Chemical Technologists at SVCE, organizing events for chemical engineering students.",
+    "location": "SVCE, Sriperumbudur"
+  },
+  {
+    "name": "CARE Eco Club",
+    "description": "Campus environmental club focused on sustainability initiatives and green awareness programs.",
+    "location": "SVCE, Sriperumbudur"
+  }
+]
