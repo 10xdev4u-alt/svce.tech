@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="aurora" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f59e0b"/>
+      <stop offset="0.5" stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+  <!-- Gopuram stepped silhouette -->
+  <path d="M14 56V40h8V32h8V24h8v8h8v8h8v16H14Z" fill="url(#aurora)"/>
+  <!-- terminal prompt -->
+  <path d="M24 44l-6 5 6 5" stroke="#fbfbf7" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M32 54h8" stroke="#fbfbf7" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+</svg>
