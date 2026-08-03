@@ -2,13 +2,25 @@
 import webpush from 'web-push';
 
 const isProduction = process.env.NODE_ENV === 'production';
+let configured = false;
 
-if (isProduction && process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(
-    process.env.WEB_PUSH_CONTACT || 'https://svce-tech.vercel.app/',
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
+/**
+ * Lazily configure VAPID details. Must be called inside the request path, not at
+ * module scope — otherwise the production build validates keys at build time and
+ * crashes route collection.
+ */
+function ensureConfigured() {
+  if (configured) return;
+  const publicKey = process.env.VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  if (publicKey && privateKey) {
+    webpush.setVapidDetails(
+      process.env.WEB_PUSH_CONTACT || 'https://svce-tech.vercel.app/',
+      publicKey,
+      privateKey
+    );
+    configured = true;
+  }
 }
 
 export interface PushSubscription {
@@ -54,6 +66,7 @@ export async function sendNotification(
   }
 
   try {
+    ensureConfigured();
     await webpush.sendNotification(
       subscription,
       JSON.stringify({
