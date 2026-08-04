@@ -36,14 +36,25 @@ export default function CalendarView({ events, onOpen }: CalendarViewProps) {
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
 
-  // Map of "YYYY-MM-DD" → events
+  // Map of "YYYY-MM-DD" → events (multi-day events appear on every day they span)
   const eventsByDate = useMemo(() => {
     const map = new Map<string, Event[]>();
-    for (const event of events) {
-      const key = event.eventDate;
-      const list = map.get(key) ?? [];
+    const addToDate = (dateKey: string, event: Event) => {
+      const list = map.get(dateKey) ?? [];
       list.push(event);
-      map.set(key, list);
+      map.set(dateKey, list);
+    };
+
+    for (const event of events) {
+      const start = new Date(event.eventDate + 'T00:00:00');
+      const end = new Date((event.eventEndDate ?? event.eventDate) + 'T00:00:00');
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) continue;
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+          d.getDate()
+        ).padStart(2, '0')}`;
+        addToDate(key, event);
+      }
     }
     return map;
   }, [events]);

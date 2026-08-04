@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { CalendarBlank, SquaresFour } from '@phosphor-icons/react';
 import type { Event } from '@/types/event';
@@ -55,6 +55,8 @@ export default function Events() {
   }, []);
 
   const { monthly, upcoming } = useMemo(() => partitionEvents(filtered, today), [filtered, today]);
+
+  const closeModal = useCallback(() => setActiveEvent(null), []);
 
   const isFiltering = selectedCommunity !== 'all' || selectedLocation !== 'all';
 
@@ -205,7 +207,7 @@ export default function Events() {
 
       {/* Detail modal */}
       <AnimatePresence>
-        {activeEvent && <EventModal event={activeEvent} onClose={() => setActiveEvent(null)} />}
+        {activeEvent && <EventModal event={activeEvent} onClose={closeModal} />}
       </AnimatePresence>
     </div>
   );

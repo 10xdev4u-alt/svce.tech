@@ -18,7 +18,7 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
   const venue = formatVenue(event.eventVenue);
 
   return (
-    <div
+    <article
       className="group relative cursor-pointer rounded-2xl p-[1.5px] transition-transform duration-300 hover:-translate-y-1"
       onMouseMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -26,15 +26,6 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
       }}
       onMouseLeave={() => setMouse(null)}
       onClick={() => onOpen(event)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onOpen(event);
-        }
-      }}
-      aria-label={`View details for ${event.eventName}`}
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-sunrise-300/60 via-transparent to-aurora-400/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative h-full rounded-2xl border border-black/5 bg-white p-5 shadow-card transition-shadow group-hover:shadow-card-hover">
@@ -79,9 +70,19 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
             )}
           </div>
 
-          <h3 className="mt-4 line-clamp-2 font-display text-xl font-semibold text-ink transition-colors group-hover:text-aurora-700">
-            {event.eventName}
-          </h3>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen(event);
+            }}
+            className="mt-4 block w-full text-left"
+            aria-label={`View details for ${event.eventName}`}
+          >
+            <h3 className="line-clamp-2 font-display text-xl font-semibold text-ink transition-colors group-hover:text-aurora-700">
+              {event.eventName}
+            </h3>
+          </button>
 
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
             <span className="chip bg-aurora-100 text-aurora-800">{event.location}</span>
@@ -107,6 +108,6 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowSquareOut,
@@ -24,9 +24,14 @@ interface EventModalProps {
 export default function EventModal({ event, onClose }: EventModalProps) {
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Close on Escape + lock body scroll
+  // Close on Escape + lock body scroll + focus management
   useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const closeButton = dialogRef.current?.querySelector<HTMLButtonElement>('button');
+    closeButton?.focus();
+
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -35,6 +40,7 @@ export default function EventModal({ event, onClose }: EventModalProps) {
     return () => {
       window.removeEventListener('keydown', handler);
       document.body.style.overflow = '';
+      previouslyFocused?.focus();
     };
   }, [onClose]);
 
@@ -80,11 +86,13 @@ export default function EventModal({ event, onClose }: EventModalProps) {
       aria-label={event.eventName}
     >
       <motion.div
+        ref={dialogRef}
+        tabIndex={-1}
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 40, scale: 0.98 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white shadow-2xl outline-none sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
