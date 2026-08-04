@@ -40,6 +40,9 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install web-push CLI
+        run: npm install -g web-push
+
       - name: Detect new events (on push)
         id: detect
         if: github.event_name == 'push'
@@ -78,6 +81,7 @@ jobs:
           echo "payload ready"
 
       - name: Send notifications & prune dead subscriptions
+        id: send
         env:
           VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
           VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
@@ -121,7 +125,8 @@ jobs:
         run: |
           echo "## Push Summary" >> $GITHUB_STEP_SUMMARY
           echo "- Total: $(wc -l < subs.txt)" >> $GITHUB_STEP_SUMMARY
-          echo "- Sent: ${{ steps.prepare.outputs.sent }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Sent: ${{ steps.send.outputs.sent }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Failed: ${{ steps.send.outputs.failed }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Cleanup
         run: rm -rf subs_repo subs.txt payload.json

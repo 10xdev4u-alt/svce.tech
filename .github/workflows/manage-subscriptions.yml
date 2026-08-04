@@ -24,14 +24,14 @@ jobs:
           echo "action=${ACTION}" >> $GITHUB_OUTPUT
 
       - name: Save subscription
-        if: steps.process.outputs.action == 'save'
+        if: steps.process.outputs.action == 'save_push_subscription'
         run: |
           FILE="subs-repo/${{ steps.process.outputs.subscription_id }}.json"
           echo '${{ toJSON(github.event.client_payload.subscription) }}' > "$FILE"
           echo "Saved $FILE"
 
       - name: Remove subscription
-        if: steps.process.outputs.action == 'remove'
+        if: steps.process.outputs.action == 'remove_push_subscription'
         run: |
           FILE="subs-repo/${{ steps.process.outputs.subscription_id }}.json"
           if [ -f "$FILE" ]; then rm "$FILE" && echo "Removed $FILE"; else echo "Not found: $FILE"; fi
