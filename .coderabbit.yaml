@@ -23,6 +23,8 @@ reviews:
     ignore_title_keywords:
       - 'skip review'
       - 'wip'
+    # Pace incremental reviews so free-plan rate limits aren't hit on busy branches
+    auto_pause_after_reviewed_commits: 3
   path_instructions:
     - path: 'src/components/**'
       instructions: |
