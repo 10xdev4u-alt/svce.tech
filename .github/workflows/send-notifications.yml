@@ -22,6 +22,7 @@ on:
         default: true
 
   push:
+    branches: [main]
     paths:
       - 'src/data/events.json'
       - 'src/data/opportunities.json'
@@ -92,7 +93,8 @@ jobs:
           PRUNED=0
           while IFS= read -r FILE || [ -n "$FILE" ]; do
             [ -z "$FILE" ] && continue
-            SUB=$(cat subs_repo/"$FILE")
+            # subs.txt lines are "subs_repo/<file>.json" — cat the full path, skip on failure
+            SUB=$(cat "$FILE" 2>/dev/null) || { FAIL=$((FAIL+1)); continue; }
             ENDPOINT=$(echo "$SUB" | jq -r '.endpoint')
             P256DH=$(echo "$SUB" | jq -r '.keys.p256dh')
             AUTH=$(echo "$SUB" | jq -r '.keys.auth')
