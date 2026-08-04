@@ -78,7 +78,7 @@ export default function Events() {
           <select
             value={selectedCommunity}
             onChange={(e) => setSelectedCommunity(e.target.value)}
-            className="rounded-xl border border-ink/10 bg-white px-3 py-2 text-sm text-ink/70 shadow-sm outline-none transition-all focus:border-aurora-500 focus:ring-4 focus:ring-aurora-500/10"
+            className="w-full rounded-xl border border-line/20 bg-surface-2 px-3 py-2 text-sm text-ink/70 shadow-sm outline-none transition-all focus:border-aurora-500 focus:ring-4 focus:ring-aurora-500/10 sm:w-auto"
             aria-label="Filter by community"
           >
             <option value="all">All communities</option>
@@ -93,7 +93,7 @@ export default function Events() {
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="rounded-xl border border-ink/10 bg-white px-3 py-2 text-sm text-ink/70 shadow-sm outline-none transition-all focus:border-aurora-500 focus:ring-4 focus:ring-aurora-500/10"
+            className="w-full rounded-xl border border-line/20 bg-surface-2 px-3 py-2 text-sm text-ink/70 shadow-sm outline-none transition-all focus:border-aurora-500 focus:ring-4 focus:ring-aurora-500/10 sm:w-auto"
             aria-label="Filter by location"
           >
             <option value="all">All locations</option>
@@ -105,7 +105,7 @@ export default function Events() {
           </select>
 
           {/* View toggle */}
-          <div className="flex overflow-hidden rounded-xl border border-ink/10 bg-white shadow-sm">
+          <div className="flex overflow-hidden rounded-xl border border-line/20 bg-surface-2 shadow-sm">
             <button
               type="button"
               onClick={() => setView('cards')}
@@ -183,7 +183,7 @@ export default function Events() {
                     : 'Plan ahead — the good stuff is coming'}
                 </p>
               </div>
-              <span className="chip text-sunrise-800 bg-sunrise-100">{upcoming.length} events</span>
+              <span className="chip bg-sunrise-100 text-sunrise-800">{upcoming.length} events</span>
             </div>
             {upcoming.length > 0 ? (
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
