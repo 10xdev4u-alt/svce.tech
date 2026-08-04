@@ -164,3 +164,23 @@ test.describe('remind me', () => {
     await expect(page.getByRole('button', { name: 'Remind me' }).first()).toBeVisible();
   });
 });
+
+test.describe('past events archive', () => {
+  test('renders the archive page with empty state and back link', async ({ page }) => {
+    await page.goto('/events/archive');
+    await expect(page.getByRole('heading', { level: 1, name: 'past events' })).toBeVisible();
+    // Live data has no finished events yet — the archive shows its empty state.
+    await expect(page.getByText('No past events yet')).toBeVisible();
+    await expect(page.getByRole('link', { name: /back to upcoming events/i })).toBeVisible();
+  });
+
+  test('home links to the archive', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: /past events/i }).first()).toBeVisible();
+    await page
+      .getByRole('link', { name: /past events/i })
+      .first()
+      .click();
+    await page.waitForURL('**/events/archive');
+  });
+});

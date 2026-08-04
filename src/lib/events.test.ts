@@ -7,7 +7,11 @@ import {
   getAlertTitle,
   formatVenue,
   getGoogleCalendarUrl,
-  partitionEvents
+  getEndedLabel,
+  getEventMonthLabel,
+  isPastEvent,
+  partitionEvents,
+  partitionPastEvents
 } from './events';
 
 function makeEvent(overrides: Partial<Event> = {}): Event {
@@ -174,5 +178,96 @@ describe('partitionEvents', () => {
     const sameMonth = makeEvent({ eventDate: '2026-08-20' });
     const { upcoming } = partitionEvents([sameMonth], today);
     expect(upcoming).toHaveLength(0);
+  });
+});
+
+describe('isPastEvent', () => {
+  const now = new Date(2026, 7, 16, 9, 0, 0); // 16 Aug 2026 09:00 local
+
+  it('is false for events that have not started', () => {
+    expect(isPastEvent(makeEvent({ eventDate: '2026-08-20' }), now)).toBe(false);
+  });
+
+  it('is false for a same-day event still running', () => {
+    const running = makeEvent({
+      eventDate: '2026-08-16',
+      eventTime: '10:00',
+      eventEndTime: '12:00'
+    });
+    expect(isPastEvent(running, now)).toBe(false);
+  });
+
+  it('is true once the end time has passed', () => {
+    const done = makeEvent({ eventDate: '2026-08-16', eventTime: '08:00', eventEndTime: '08:59' });
+    expect(isPastEvent(done, now)).toBe(true);
+  });
+
+  it('is true for a single-day event on a past day', () => {
+    expect(isPastEvent(makeEvent({ eventDate: '2026-08-01' }), now)).toBe(true);
+  });
+
+  it('is false for a multi-day event still ending today', () => {
+    const endingToday = makeEvent({
+      eventDate: '2026-08-14',
+      eventEndDate: '2026-08-16',
+      eventEndTime: '18:00'
+    });
+    expect(isPastEvent(endingToday, now)).toBe(false);
+  });
+
+  it('is true for a multi-day event that ended yesterday', () => {
+    const ended = makeEvent({
+      eventDate: '2026-08-14',
+      eventEndDate: '2026-08-15',
+      eventEndTime: '18:00'
+    });
+    expect(isPastEvent(ended, now)).toBe(true);
+  });
+});
+
+describe('partitionPastEvents', () => {
+  const now = new Date(2026, 7, 16, 9, 0, 0);
+
+  it('returns only finished events, newest first', () => {
+    const past = makeEvent({ eventName: 'Done', eventDate: '2026-08-15' });
+    const upcoming = makeEvent({ eventName: 'Soon', eventDate: '2026-08-20' });
+    expect(partitionPastEvents([upcoming, past], now).map((e) => e.eventName)).toEqual(['Done']);
+  });
+
+  it('excludes an event still ending today', () => {
+    const endingToday = makeEvent({
+      eventDate: '2026-08-14',
+      eventEndDate: '2026-08-16',
+      eventEndTime: '18:00'
+    });
+    expect(partitionPastEvents([endingToday], now)).toHaveLength(0);
+  });
+
+  it('sorts by end date descending', () => {
+    const older = makeEvent({ eventName: 'Older', eventDate: '2026-08-01' });
+    const newer = makeEvent({ eventName: 'Newer', eventDate: '2026-08-10' });
+    const result = partitionPastEvents([older, newer], now);
+    expect(result.map((e) => e.eventName)).toEqual(['Newer', 'Older']);
+  });
+});
+
+describe('getEndedLabel', () => {
+  const now = new Date(2026, 7, 16, 9, 0, 0);
+
+  it('labels a same-day end as today', () => {
+    const done = makeEvent({ eventDate: '2026-08-16', eventTime: '08:00', eventEndTime: '09:00' });
+    expect(getEndedLabel(done, now)).toBe('Ended today');
+  });
+
+  it('labels yesterday and older', () => {
+    expect(getEndedLabel(makeEvent({ eventDate: '2026-08-15' }), now)).toBe('Ended yesterday');
+    expect(getEndedLabel(makeEvent({ eventDate: '2026-08-10' }), now)).toBe('Ended 6 days ago');
+  });
+});
+
+describe('getEventMonthLabel', () => {
+  it('groups by the end date month for multi-day events', () => {
+    const event = makeEvent({ eventDate: '2026-07-30', eventEndDate: '2026-08-02' });
+    expect(getEventMonthLabel(event)).toBe('August 2026');
   });
 });
