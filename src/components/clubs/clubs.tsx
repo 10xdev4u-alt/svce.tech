@@ -54,7 +54,7 @@ export default function Clubs() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-ink/10 bg-surface-2/60 py-20 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line/20 bg-surface-2/60 py-20 text-center">
           <XSquare size={56} weight="light" className="mb-4 text-ink/30" />
           <p className="text-lg font-medium text-ink">No clubs found matching “{query}”</p>
           <p className="mt-1 text-sm text-ink/50">Try a different keyword, or check back soon.</p>
@@ -74,7 +74,7 @@ function ClubCard({ club }: { club: Community }) {
 
   return (
     <article className="group flex h-full gap-4 rounded-2xl border border-line/10 bg-surface-2 p-6 shadow-card transition-all hover:-translate-y-1 hover:border-aurora-400/40 hover:shadow-card-hover">
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sunrise-100 to-aurora-100 font-display text-lg font-bold text-aurora-800 transition-transform duration-300 group-hover:scale-105">
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sunrise-100 to-aurora-100 font-display text-lg font-bold text-aurora-800 transition-transform duration-300 group-hover:scale-105 dark:from-amber-950/60 dark:to-emerald-950/60 dark:text-aurora-300">
         {firstLetters || '?'}
       </div>
       <div className="min-w-0 flex-1">
