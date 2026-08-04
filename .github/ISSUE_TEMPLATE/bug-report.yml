@@ -1,0 +1,26 @@
+name: '🐛 Bug Report'
+description: 'Report something broken on svce.tech'
+title: 'bug: [short description]'
+labels: ['bug']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      placeholder: 'Describe the bug clearly.'
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+  - type: input
+    id: context
+    attributes:
+      label: Device / browser / theme
+      placeholder: 'iPhone 13, Safari, dark mode'
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: '1. Go to …  2. Click …  3. See error'

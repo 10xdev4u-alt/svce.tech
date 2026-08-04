@@ -1,0 +1,17 @@
+name: '💡 Feature Request'
+description: 'Suggest an improvement for svce.tech'
+title: 'feat: [short description]'
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem or gap?
+      placeholder: "What are you trying to do that the site doesn't support?"
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      placeholder: 'Describe the feature in a few lines.'
