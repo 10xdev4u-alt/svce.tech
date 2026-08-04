@@ -3,7 +3,7 @@ import { Heart } from '@phosphor-icons/react/dist/ssr';
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-black/5 bg-[#fbfbf7]">
+    <footer className="mt-24 border-t border-line/10 bg-surface">
       <div className="container-page flex flex-col items-center justify-between gap-4 py-10 sm:flex-row">
         <div className="flex items-center gap-2 text-sm text-ink/60">
           Made with <Heart size={14} weight="fill" className="text-aurora-500" /> for the SVCE

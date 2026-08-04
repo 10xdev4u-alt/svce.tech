@@ -28,7 +28,7 @@ function getStats() {
 export default function Hero() {
   const stats = getStats();
   return (
-    <section className="relative overflow-hidden bg-aurora-hero">
+    <section className="relative overflow-hidden bg-aurora-hero dark:bg-aurora-hero-dark">
       {/* Ambient aurora glows */}
       <div className="pointer-events-none absolute inset-0 bg-aurora-glow" />
       <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 animate-aurora-drift rounded-full bg-sunrise-300/40 blur-[120px]" />
@@ -40,7 +40,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-aurora-600/20 bg-white/70 px-4 py-1.5 text-xs font-medium text-aurora-800 shadow-sm backdrop-blur">
+          <span className="inline-flex items-center gap-2 rounded-full border border-aurora-600/20 bg-surface-2/70 px-4 py-1.5 text-xs font-medium text-aurora-800 shadow-sm backdrop-blur">
             <span className="h-2 w-2 animate-pulse rounded-full bg-aurora-500" />
             Sri Venkateswara College of Engineering · Sriperumbudur
           </span>
@@ -80,13 +80,13 @@ export default function Hero() {
         >
           <Link
             href="/opportunities"
-            className="rounded-xl bg-ink px-6 py-3 text-base font-medium text-white shadow-lg shadow-ink/20 transition-all hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0"
+            className="rounded-xl bg-ink px-6 py-3 text-base font-medium text-on-accent shadow-lg shadow-ink/20 transition-all hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0"
           >
             Explore opportunities
           </Link>
           <Link
             href="/clubs"
-            className="rounded-xl border border-ink/10 bg-white/80 px-6 py-3 text-base font-medium text-ink backdrop-blur transition-all hover:-translate-y-0.5 hover:border-aurora-500/40 hover:bg-white"
+            className="rounded-xl border border-line/20 bg-surface-2/80 px-6 py-3 text-base font-medium text-ink backdrop-blur transition-all hover:-translate-y-0.5 hover:border-aurora-500/40 hover:bg-surface-2"
           >
             Browse clubs
           </Link>

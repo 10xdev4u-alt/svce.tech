@@ -28,7 +28,7 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
       onClick={() => onOpen(event)}
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-sunrise-300/60 via-transparent to-aurora-400/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <div className="relative h-full rounded-2xl border border-black/5 bg-white p-5 shadow-card transition-shadow group-hover:shadow-card-hover">
+      <div className="relative h-full rounded-2xl border border-line/10 bg-surface-2 p-5 shadow-card transition-shadow group-hover:shadow-card-hover">
         {mouse && (
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -40,7 +40,7 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
 
         <div className="relative">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="chip border border-black/10 bg-white text-ink/70">
+            <span className="chip border border-line/20 bg-surface-2 text-ink/70">
               {event.communityName}
             </span>
             {event.alert && (
@@ -54,16 +54,16 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
                   }}
                   onMouseEnter={() => setShowAlert(true)}
                   onMouseLeave={() => setShowAlert(false)}
-                  className="text-sunrise-900 rounded-full bg-sunrise-200 p-1.5 shadow-sm transition-colors hover:bg-sunrise-300"
+                  className="rounded-full bg-sunrise-200 p-1.5 text-sunrise-900 shadow-sm transition-colors hover:bg-sunrise-300"
                   aria-label="Event alert"
                 >
                   <Warning size={14} weight="fill" />
                 </button>
                 {showAlert && (
-                  <div className="absolute left-0 top-8 z-50 w-60 rounded-xl border border-sunrise-200 bg-white p-3 shadow-xl">
-                    <p className="text-sunrise-900 text-sm font-semibold">{alertTitle}</p>
+                  <div className="absolute left-0 top-8 z-50 w-60 rounded-xl border border-sunrise-200 bg-surface-2 p-3 shadow-xl">
+                    <p className="text-sm font-semibold text-sunrise-900">{alertTitle}</p>
                     <p className="mt-1 text-xs text-ink/60">{event.alert?.message}</p>
-                    <div className="absolute -top-1 left-3 h-2 w-2 rotate-45 border-l border-t border-sunrise-200 bg-white" />
+                    <div className="absolute -top-1 left-3 h-2 w-2 rotate-45 border-l border-t border-sunrise-200 bg-surface-2" />
                   </div>
                 )}
               </div>
@@ -90,7 +90,7 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
               <CalendarDots size={12} className="mr-1" />
               {formatDate(event.eventDate)}
             </span>
-            <span className="chip text-sunrise-800 bg-sunrise-100">
+            <span className="chip bg-sunrise-100 text-sunrise-800">
               {formatTime(event.eventTime)}
             </span>
           </div>
@@ -100,7 +100,7 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
             <span className="line-clamp-2">{venue}</span>
           </p>
 
-          <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-3">
+          <div className="mt-4 flex items-center justify-between border-t border-line/10 pt-3">
             <span className="text-xs font-medium text-aurora-700 transition-colors group-hover:text-aurora-800">
               View details →
             </span>

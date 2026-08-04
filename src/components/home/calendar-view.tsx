@@ -80,7 +80,7 @@ export default function CalendarView({ events, onOpen }: CalendarViewProps) {
   const isCurrentMonth = viewMonth === today.getMonth() && viewYear === today.getFullYear();
 
   return (
-    <div className="rounded-2xl border border-black/5 bg-white p-5 shadow-card sm:p-6">
+    <div className="rounded-2xl border border-line/10 bg-surface-2 p-5 shadow-card sm:p-6">
       {/* Header */}
       <div className="mb-5 flex items-center justify-between">
         <h3 className="font-display text-lg font-bold text-ink">{monthLabel}</h3>
@@ -143,8 +143,8 @@ export default function CalendarView({ events, onOpen }: CalendarViewProps) {
                 isToday
                   ? 'border-aurora-500 bg-aurora-50'
                   : dayEvents.length > 0
-                    ? 'border-aurora-200/70 bg-white'
-                    : 'border-black/5 bg-ink/[0.02]'
+                    ? 'border-aurora-200/70 bg-surface-2'
+                    : 'border-line/10 bg-ink/[0.02]'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -192,7 +192,7 @@ export default function CalendarView({ events, onOpen }: CalendarViewProps) {
       </div>
 
       {/* Legend */}
-      <div className="mt-5 flex flex-wrap items-center gap-4 border-t border-black/5 pt-4 text-xs text-ink/50">
+      <div className="mt-5 flex flex-wrap items-center gap-4 border-t border-line/10 pt-4 text-xs text-ink/50">
         <span className="flex items-center gap-2">
           <CalendarBlank size={14} className="text-aurora-600" />
           {events.length} events on this list

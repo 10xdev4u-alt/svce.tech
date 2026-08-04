@@ -79,7 +79,7 @@ export default function EventModal({ event, onClose }: EventModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-overlay/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -92,27 +92,27 @@ export default function EventModal({ event, onClose }: EventModalProps) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 40, scale: 0.98 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white shadow-2xl outline-none sm:rounded-3xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-surface-2 shadow-2xl outline-none sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="relative border-b border-black/5 bg-gradient-to-br from-sunrise-50 via-white to-aurora-50 p-6 sm:p-8">
+        <div className="relative border-b border-line/10 bg-gradient-to-br from-sunrise-50 via-white to-aurora-50 p-6 dark:from-amber-950/40 dark:via-surface-2 dark:to-emerald-950/40 sm:p-8">
           <button
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 rounded-full bg-white/80 p-2 text-ink/60 shadow-sm transition-colors hover:bg-white hover:text-ink"
+            className="absolute right-4 top-4 rounded-full bg-surface-2/80 p-2 text-ink/60 shadow-sm transition-colors hover:bg-surface-2 hover:text-ink"
             aria-label="Close details"
           >
             <X size={18} />
           </button>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="chip border border-black/10 bg-white text-ink/70">
+            <span className="chip border border-line/20 bg-surface-2 text-ink/70">
               {event.communityName}
             </span>
             <span className="chip bg-aurora-100 text-aurora-800">{event.location}</span>
             {event.alert && (
-              <span className="chip text-sunrise-900 bg-sunrise-200">
+              <span className="chip bg-sunrise-200 text-sunrise-900">
                 <Warning size={12} weight="fill" className="mr-1" />
                 {alertTitle}
               </span>
@@ -137,8 +137,8 @@ export default function EventModal({ event, onClose }: EventModalProps) {
         <div className="p-6 sm:p-8">
           {event.alert && (
             <div className="mb-6 rounded-xl border border-sunrise-200 bg-sunrise-50 p-4">
-              <p className="text-sunrise-900 text-sm font-semibold">{alertTitle}</p>
-              <p className="text-sunrise-800 mt-1 text-sm">{event.alert.message}</p>
+              <p className="text-sm font-semibold text-sunrise-900">{alertTitle}</p>
+              <p className="mt-1 text-sm text-sunrise-800">{event.alert.message}</p>
             </div>
           )}
 
@@ -155,7 +155,7 @@ export default function EventModal({ event, onClose }: EventModalProps) {
               href={event.eventLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-on-accent shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:flex-none"
             >
               Register / RSVP
               <ArrowSquareOut size={16} weight="bold" />
@@ -172,7 +172,7 @@ export default function EventModal({ event, onClose }: EventModalProps) {
           </div>
 
           {/* Share */}
-          <div className="mt-6 border-t border-black/5 pt-5">
+          <div className="mt-6 border-t border-line/10 pt-5">
             <p className="text-sm font-semibold text-ink/60">Share this event</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
