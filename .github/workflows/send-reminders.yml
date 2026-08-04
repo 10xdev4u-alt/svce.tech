@@ -1,0 +1,106 @@
+name: Send Event Reminders
+
+on:
+  schedule:
+    # Every 10 minutes (GitHub Actions min granularity is 5m; 10m is plenty
+    # for "remind me before the event" and keeps Actions minutes low).
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout subscriptions repo
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ secrets.SUBSCRIPTION_REPO }}
+          token: ${{ secrets.GH_DB_PAT }}
+          path: subs-repo
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Install web-push CLI
+        run: npm install -g web-push
+
+      - name: Send due reminders
+        id: send
+        env:
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: |
+          SENT=0
+          FAIL=0
+          NOW=$(date +%s)
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            REM=$(cat "subs-repo/reminders/$FILE")
+            REMIND_AT=$(echo "$REM" | jq -r '.remindAt // empty')
+            # Skip anything malformed or not yet due
+            if [ -z "$REMIND_AT" ] || [ "$REMIND_AT" -gt "$NOW" ]; then
+              continue
+            fi
+            SUB_ID=$(echo "$REM" | jq -r '.subscriptionId // empty')
+            [ -z "$SUB_ID" ] && continue
+            SUB_FILE="subs-repo/$SUB_ID.json"
+            [ -f "$SUB_FILE" ] || continue
+
+            ENDPOINT=$(jq -r '.endpoint' "$SUB_FILE")
+            P256DH=$(jq -r '.keys.p256dh' "$SUB_FILE")
+            AUTH=$(jq -r '.keys.auth' "$SUB_FILE")
+            [ -z "$ENDPOINT" ] || [ -z "$P256DH" ] || [ -z "$AUTH" ] && continue
+
+            EVENT_NAME=$(echo "$REM" | jq -r '.eventName // "Your event"')
+            EVENT_TIME=$(echo "$REM" | jq -r '.eventTime // ""')
+            EVENT_LINK=$(echo "$REM" | jq -r '.eventLink // ""')
+            TITLE="Reminder: $EVENT_NAME"
+            BODY="Starting at ${EVENT_TIME:-event time}. Don't miss it!"
+            if [ -n "$EVENT_LINK" ]; then
+              URL="$EVENT_LINK"
+            else
+              URL="/"
+            fi
+
+            if web-push send-notification \
+                --endpoint="$ENDPOINT" \
+                --key="$P256DH" \
+                --auth="$AUTH" \
+                --vapid-subject="https://svce-tech.vercel.app/" \
+                --vapid-pubkey="$VAPID_PUBLIC_KEY" \
+                --vapid-pvtkey="$VAPID_PRIVATE_KEY" \
+                --payload="$(jq -nc --arg t "$TITLE" --arg b "$BODY" --arg u "$URL" '{title:$t, body:$b, url:$u, tag:"reminder"}')" \
+                --ttl=3600 2>/dev/null; then
+              SENT=$((SENT+1))
+              rm "subs-repo/reminders/$FILE"
+            else
+              FAIL=$((FAIL+1))
+            fi
+            sleep 0.2
+          done < <(ls subs-repo/reminders 2>/dev/null || echo "")
+
+          echo "sent=$SENT" >> $GITHUB_OUTPUT
+          echo "failed=$FAIL" >> $GITHUB_OUTPUT
+
+      - name: Commit handled reminders
+        if: steps.send.outputs.sent != '0'
+        run: |
+          cd subs-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "send reminders: ${{ steps.send.outputs.sent }} sent, ${{ steps.send.outputs.failed }} failed"
+            git push
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Reminder Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Sent: ${{ steps.send.outputs.sent }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Failed: ${{ steps.send.outputs.failed }}" >> $GITHUB_STEP_SUMMARY

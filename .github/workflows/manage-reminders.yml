@@ -1,0 +1,49 @@
+name: Manage Event Reminders
+
+on:
+  repository_dispatch:
+    types: [save_reminder, remove_reminder]
+
+jobs:
+  manage-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout subscriptions repo
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ secrets.SUBSCRIPTION_REPO }}
+          token: ${{ secrets.GH_DB_PAT }}
+          path: subs-repo
+
+      - name: Process event
+        id: process
+        run: |
+          echo "id=${{ github.event.client_payload.reminder.id }}" >> $GITHUB_OUTPUT
+          echo "action=${{ github.event.action }}" >> $GITHUB_OUTPUT
+
+      - name: Save reminder
+        if: steps.process.outputs.action == 'save_reminder'
+        run: |
+          mkdir -p subs-repo/reminders
+          FILE="subs-repo/reminders/${{ steps.process.outputs.id }}.json"
+          echo '${{ toJSON(github.event.client_payload.reminder) }}' > "$FILE"
+          echo "Saved $FILE"
+
+      - name: Remove reminder
+        if: steps.process.outputs.action == 'remove_reminder'
+        run: |
+          FILE="subs-repo/reminders/${{ steps.process.outputs.id }}.json"
+          if [ -f "$FILE" ]; then rm "$FILE" && echo "Removed $FILE"; else echo "Not found: $FILE"; fi
+
+      - name: Commit and push
+        run: |
+          cd subs-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "${{ steps.process.outputs.action }} ${{ steps.process.outputs.id }}"
+            git push
+          fi
