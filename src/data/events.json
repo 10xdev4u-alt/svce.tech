@@ -58,6 +58,18 @@
     "communityLogo": "https://podu.pics/ib_DGjze85"
   },
   {
+    "eventName": "HEATCODE 2026 — Online ML Challenge",
+    "eventDescription": "An online Machine Learning challenge by the Forum of Data Science Engineers (FODSE), SVCE — where innovation meets intelligence. Step into the multiverse of ideas, tackle real-world ML challenges, and build intelligent solutions. Open to 2nd–4th year CSE, AD and IT students — whether you're a beginner or an experienced coder. Registration closes 7 August 2026. Queries: Harish K (Technical Lead) +91 93639 24520, Sharan (General Secretary) +91 79040 66257.",
+    "eventDate": "2026-08-08",
+    "eventTime": "09:00",
+    "eventEndDate": "2026-08-09",
+    "eventEndTime": "18:00",
+    "eventVenue": "Online",
+    "eventLink": "https://heatcode-eight.vercel.app/",
+    "location": "Online",
+    "communityName": "FODSE — Forum of Data Science Engineers, SVCE"
+  },
+  {
     "eventName": "ILUGC Monthly Meet - September 2026",
     "eventDescription": "Indian Linux User Group Chennai monthly meet — one of India's oldest active FOSS/Linux user groups (running since 1998). Technical talks and demos, free and open to all.",
     "eventDate": "2026-09-12",
