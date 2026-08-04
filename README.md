@@ -12,7 +12,7 @@ survives every graduating batch.**
 - 🏛️ **Clubs** — searchable directory of SVCE student chapters
 - 💼 **Opportunities** — internships, hackathons, jobs, research (community-shared)
 - 📚 **Resources** — off-campus portals, DSA/interview prep, courses (community-shared)
-- 🌗 **Dark mode + mobile nav** — OS-aware theme with manual toggle, hamburger menu
+- 🌗 **Dark mode + mobile nav** — light-by-default theme with manual toggle, hamburger menu
 - 🤝 **Contribute in 2 minutes** — edit a JSON file, open a PR
 
 ## 🛠️ Tech Stack

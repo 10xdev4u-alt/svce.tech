@@ -5,8 +5,8 @@ import { Moon, Sun } from '@phosphor-icons/react';
 import { applyTheme, getStoredPreference, resolveTheme } from '@/lib/theme';
 
 /**
- * Header sun/moon toggle. Clicking flips the resolved theme and pins an
- * explicit light/dark preference (lifting the user out of "system").
+ * Header sun/moon toggle. Light is the default; clicking flips the resolved
+ * theme and pins an explicit light/dark preference for this visitor.
  */
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -16,19 +16,6 @@ export default function ThemeToggle() {
     const pref = getStoredPreference();
     setIsDark(resolveTheme(pref) === 'dark');
     setMounted(true);
-
-    // Follow OS changes while the user hasn't pinned a preference
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => {
-      const current = getStoredPreference();
-      if (!current || current === 'system') {
-        // Re-apply so the document actually follows the OS change
-        applyTheme('system');
-        setIsDark(media.matches);
-      }
-    };
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
   }, []);
 
   function toggle() {

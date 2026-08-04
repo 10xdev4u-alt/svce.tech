@@ -38,14 +38,13 @@ Deploy flow used every phase: **validate → lint → build → conventional com
 ## 3. What's shipped (Phases 1–8)
 
 | Phase                          | What                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1 · Core hub**               | Home (hero w/ live-computed stats, "this month" + "upcoming" events), Clubs directory (`/clubs`), design system "Campus Aurora", header/footer, not-found, error page                                                                                                                                                                                                                                                       |
 | **2 · Contribution engine**    | Data validation script (`scripts/validate-data.mjs`, timezone-safe date checks), wired into lint-staged + CI, CONTRIBUTING.md                                                                                                                                                                                                                                                                                               |
 | **3 · Push notifications**     | Bell (single instance) + 6s prompt, service worker, hashed API routes, private subscriptions repo, 2 workflows, VAPID/GH secrets. **See §6 — was broken, now proven fixed**                                                                                                                                                                                                                                                 |
 | **4 · Event UX**               | Clickable cards → detail modal (register, add-to-calendar, share, copy, WhatsApp), calendar view (multi-day aware), community/location filters, cards↔calendar toggle, a11y pass                                                                                                                                                                                                                                           |
 | **5 · Resources & placement**  | `/resources` — 21 real resources (off-campus/job-fairs, DSA, interview, aptitude, resume, open-source, courses), category filter chips, contribute callout. **No SVCE placement stuff**                                                                                                                                                                                                                                     |
-| **6 · Search & SEO**           | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts`                                                                                                                                                                                                                                                                          |
-| **7 · Mobile & dark mode**     | **Shipped 2026-08-04.** Semantic design tokens (`--surface`/`--surface-2`/`--ink`/`--line`/`--overlay`/`--on-accent`) + class-based `.dark`, FOUC-safe inline theme script + sun/moon toggle (OS-aware, pinned override), hamburger mobile nav (sheet below `lg`), global `:focus-visible` ring, mobile select-width fix                                                                                                    |
+| **6 · Search & SEO**           | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts`                                                                                                                                                                                                                                                                          |     | **7 · Mobile & dark mode** | **Shipped 2026-08-04.** Semantic design tokens (`--surface`/`--surface-2`/`--ink`/`--line`/`--overlay`/`--on-accent`) + class-based `.dark`, FOUC-safe inline theme script + sun/moon toggle (**light by default**, pinned override), hamburger mobile nav (sheet below `lg`), global `:focus-visible` ring, mobile select-width fix. _2026-08-05: default changed from OS-following to **light** — dark only when the visitor pins it._ |
 | **8 · Community & flow locks** | **Shipped 2026-08-05.** PR-driven workflow enforced end-to-end: branch protection on `main` (strict, enforce-admins, requires CI + title check + Vercel), semantic-PR-title CI gate, PR template, Dependabot (weekly npm + actions), CodeRabbit review bot + config, issue templates (add-event/bug/feature), CONTRIBUTING flow section, dependabot ignore rules for coupled majors (eslint-config-next ≥16, typescript ≥6) |
 
 **Also fixed along the way:** sunrise palette shades 600–900 were missing (white text on light-orange chips in dark mode — root cause of a visible bug), notification popup was rendering against the header (`backdrop-filter` containing block) → fixed via portal to `document.body`.
@@ -130,7 +129,7 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 1. ~~Stale TODO comments in `error.tsx`/`not-found.tsx`~~ — resolved: `error.tsx` doesn't exist on disk and `not-found.tsx` is fully customized.
 2. **README Features list missing Resources** — fixed in Phase 7 (added).
-3. ~~Half-baked dark mode~~ — **DONE in Phase 7**: tokens + `.dark` + OS-aware toggle.
+3. ~~Half-baked dark mode~~ — **DONE in Phase 7**: tokens + `.dark` + toggle (default = light).
 4. ~~Header nav crowded on mobile~~ — **DONE in Phase 7**: hamburger sheet below `lg`.
 5. Search matches are substring-only ("hackathon" returns 3 instead of 2 — broad but acceptable).
 6. No unit tests yet — validation script + lib helpers untested by a framework (**Phase 9**).
@@ -139,12 +138,11 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ## 8. Roadmap — remaining phases
 
-| Phase                          | Scope                                                                                                                              |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **7 · Mobile & dark mode**     | ✅ **Shipped 2026-08-04** — tokens, OS-aware toggle, hamburger nav                                                                 |
+| Phase | Scope |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- || **7 · Mobile & dark mode** | ✅ **Shipped 2026-08-04** — tokens, toggle, hamburger nav (default = light since 2026-08-05) |
 | **8 · Community & flow locks** | ✅ **Shipped 2026-08-05** — PR template, branch protection, title gate, Dependabot, CodeRabbit, issue templates, CONTRIBUTING flow |
-| **9 · Testing & reliability**  | Unit tests for `lib/events.ts` + `scripts/validate-data.mjs`, Playwright E2E wired into CI                                         |
-| **10 · Growth**                | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror                              |
+| **9 · Testing & reliability** | Unit tests for `lib/events.ts` + `scripts/validate-data.mjs`, Playwright E2E wired into CI |
+| **10 · Growth** | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror |
 
 ---
 
@@ -154,7 +152,7 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ### A. Dark mode ✅ (shipped 2026-08-04)
 
-- [x] **Decision:** chose **(a) proper dark theme** + OS-aware sun/moon toggle (owner confirmed "OS-aware + toggle").
+- [x] **Decision:** chose **(a) proper dark theme** + sun/moon toggle. _2026-08-05: light-by-default — no system-following (owner decision)._
 - [x] Introduce CSS tokens (`--surface`, `--surface-2`, `--ink`, `--line`, `--overlay`, `--on-accent`) as RGB triplets in `globals.css`; mapped every hardcoded `bg-white`, `text-ink`, `border-black/5`, `bg-[#fbfbf7]`, `bg-white/xx` across components to tokens.
 - [x] Converted in order: header/footer → hero (`dark:bg-aurora-hero-dark`) → event cards + modal + calendar → search palette → opportunities → resources → clubs → chips (kept light chips w/ dark text — they pass contrast on dark surfaces).
 - [x] `color-scheme` set via CSS (`:root` light / `.dark` dark) so form controls/scrollbars match; FOUC-safe inline script sets `.dark` before paint.
