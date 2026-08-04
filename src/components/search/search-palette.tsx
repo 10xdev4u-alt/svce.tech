@@ -228,6 +228,25 @@ export default function SearchPalette() {
       e.preventDefault();
       const target = resultItems[activeIdx];
       if (target) select(target.result);
+    } else if (e.key === 'Tab') {
+      // Simple focus trap so Tab cycles within the aria-modal dialog
+      const dialog = e.currentTarget.closest('[role="dialog"]');
+      if (!dialog) return;
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button, input, [href], [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   }
 
