@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, BellRinging, X } from '@phosphor-icons/react';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
@@ -114,47 +115,51 @@ export default function PushSubscribe() {
 
   return (
     <>
-      {/* Prompt (single instance — only rendered from this one component) */}
-      {promptOpen && !isSubscribed && (
-        <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-aurora-200 bg-white p-4 shadow-2xl">
-          <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-aurora-100 text-aurora-700">
-              <Bell size={18} weight="fill" />
+      {/* Prompt — rendered via portal to <body> so the sticky header's
+          backdrop-filter can't hijack its fixed positioning */}
+      {promptOpen &&
+        !isSubscribed &&
+        createPortal(
+          <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-aurora-200 bg-white p-4 shadow-2xl">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-aurora-100 text-aurora-700">
+                <Bell size={18} weight="fill" />
+              </div>
+              <div className="flex-1">
+                <p className="font-display text-sm font-semibold text-ink">Stay in the loop</p>
+                <p className="mt-0.5 text-xs text-ink/60">
+                  Get notified when new events and opportunities are added.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPromptOpen(false)}
+                className="text-ink/40 transition-colors hover:text-ink"
+                aria-label="Dismiss notification prompt"
+              >
+                <X size={16} />
+              </button>
             </div>
-            <div className="flex-1">
-              <p className="font-display text-sm font-semibold text-ink">Stay in the loop</p>
-              <p className="mt-0.5 text-xs text-ink/60">
-                Get notified when new events and opportunities are added.
-              </p>
+            <div className="mt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={subscribe}
+                disabled={isLoading}
+                className="flex-1 rounded-lg bg-aurora-600 px-3 py-2 text-sm font-medium text-white transition-all hover:bg-aurora-700 disabled:opacity-50"
+              >
+                {isLoading ? 'Enabling...' : 'Enable'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPromptOpen(false)}
+                className="flex-1 rounded-lg bg-ink/5 px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-ink/10"
+              >
+                Later
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setPromptOpen(false)}
-              className="text-ink/40 transition-colors hover:text-ink"
-              aria-label="Dismiss notification prompt"
-            >
-              <X size={16} />
-            </button>
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={subscribe}
-              disabled={isLoading}
-              className="flex-1 rounded-lg bg-aurora-600 px-3 py-2 text-sm font-medium text-white transition-all hover:bg-aurora-700 disabled:opacity-50"
-            >
-              {isLoading ? 'Enabling...' : 'Enable'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setPromptOpen(false)}
-              className="flex-1 rounded-lg bg-ink/5 px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-ink/10"
-            >
-              Later
-            </button>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* Bell button */}
       <button
@@ -176,19 +181,21 @@ export default function PushSubscribe() {
         <span className="hidden sm:inline">{isSubscribed ? 'On' : 'Notify me'}</span>
       </button>
 
-      {error && (
-        <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-red-200 bg-white p-4 shadow-2xl">
-          <p className="text-sm font-semibold text-red-700">Something went wrong</p>
-          <p className="mt-1 text-xs text-ink/60">{error}</p>
-          <button
-            type="button"
-            onClick={() => setError(null)}
-            className="mt-2 text-xs font-medium text-red-600 hover:text-red-700"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
+      {error &&
+        createPortal(
+          <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-red-200 bg-white p-4 shadow-2xl">
+            <p className="text-sm font-semibold text-red-700">Something went wrong</p>
+            <p className="mt-1 text-xs text-ink/60">{error}</p>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="mt-2 text-xs font-medium text-red-600 hover:text-red-700"
+            >
+              Dismiss
+            </button>
+          </div>,
+          document.body
+        )}
     </>
   );
 }
