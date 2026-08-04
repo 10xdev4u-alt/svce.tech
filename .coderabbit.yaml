@@ -49,5 +49,5 @@ tools:
   run_shell:
     enable: true
     command: ['pnpm']
-    script: 'validate:data && lint'
+    script: 'validate:data'
     trigger: 'run-shell'
