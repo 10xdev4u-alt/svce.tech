@@ -91,3 +91,31 @@ test.describe('page routes', () => {
     });
   }
 });
+
+test.describe('subscription feeds', () => {
+  test('events.ics serves a valid iCalendar file', async ({ request }) => {
+    const res = await request.get('/events.ics');
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('text/calendar');
+    const body = await res.text();
+    expect(body).toContain('BEGIN:VCALENDAR');
+    expect(body).toContain('BEGIN:VEVENT');
+    expect(body).toMatch(/DTSTART:\d{8}T\d{6}/);
+  });
+
+  test('feed.xml serves valid RSS', async ({ request }) => {
+    const res = await request.get('/feed.xml');
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('application/rss+xml');
+    const body = await res.text();
+    expect(body).toContain('<?xml version="1.0"');
+    expect(body).toContain('<rss version="2.0"');
+    expect(body).toContain('<item>');
+  });
+
+  test('subscribe links are visible on the events section', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: 'Calendar feed' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'RSS' })).toBeVisible();
+  });
+});

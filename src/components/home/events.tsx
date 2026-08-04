@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { CalendarBlank, SquaresFour } from '@phosphor-icons/react';
+import { CalendarBlank, Rss, SquaresFour } from '@phosphor-icons/react';
 import type { Event } from '@/types/event';
 import eventsJson from '@/data/events.json';
 import { partitionEvents } from '@/lib/events';
@@ -128,6 +128,26 @@ export default function Events() {
               <CalendarBlank size={15} />
               Calendar
             </button>
+          </div>
+
+          {/* Subscribe: iCal + RSS */}
+          <div className="flex overflow-hidden rounded-xl border border-line/20 bg-surface-2 shadow-sm">
+            <a
+              href="/events.ics"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-aurora-100 hover:text-aurora-800 dark:hover:bg-aurora-900/40 dark:hover:text-aurora-300"
+              title="Subscribe to the SVCE events calendar (iCal)"
+            >
+              <CalendarBlank size={15} />
+              Calendar feed
+            </a>
+            <a
+              href="/feed.xml"
+              className="flex items-center gap-1.5 border-l border-ink/10 px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-aurora-100 hover:text-aurora-800 dark:hover:bg-aurora-900/40 dark:hover:text-aurora-300"
+              title="Subscribe to the SVCE events RSS feed"
+            >
+              <Rss size={15} />
+              RSS
+            </a>
           </div>
         </div>
       </div>
