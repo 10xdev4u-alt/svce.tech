@@ -1,0 +1,53 @@
+# CodeRabbit AI code review configuration — svce.tech
+# Reference: https://docs.coderabbit.ai/configure-coderabbit/config-reference
+
+language: 'en-US'
+early_access: false
+
+reviews:
+  # Assertive profile: catches correctness + style issues, not just nits
+  profile: 'assertive'
+  # Suggest changes in comments, never auto-request formal review changes
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - 'main'
+    affected_files: true
+    ignore_title_keywords:
+      - 'skip review'
+      - 'wip'
+    ignore_branches: []
+  path_instructions:
+    - path: 'src/components/**'
+      instructions: |
+        Follow the existing "Campus Aurora" design system and component patterns:
+        - Reuse the semantic tokens (`bg-surface`, `bg-surface-2`, `text-ink/*`, `border-line/*`, `text-on-accent`) instead of hardcoded `bg-white`, `text-black`, `bg-[#fbfbf7]`.
+        - Use `dark:` variants only for special cases (gradients, chips) that tokens can't express.
+        - Anything `position: fixed` rendered inside the sticky header must be portaled to `document.body` (the header's backdrop-blur creates a containing block).
+        - Keep the single-instance rule: never render `<PushSubscribe />` twice.
+        - Preserve the a11y baseline: Escape-to-close, scroll lock, focus restore on modals/palette.
+    - path: 'src/data/**'
+      instructions: |
+        Data must be real and verified — never AI-generated or fabricated. Fields must pass `scripts/validate-data.mjs` (dates YYYY-MM-DD, times HH:MM 24h, valid URLs, whitelisted categories, no duplicates).
+
+chat:
+  auto_reply: true
+  auto_reply_all_threads: false
+
+tools:
+  shell_if_fix:
+    enable: true
+    trigger: 'shell-if-fix'
+  inspect_code:
+    enable: true
+  run_shell:
+    enable: true
+    command: ['pnpm']
+    script: 'validate:data && lint'
+    trigger: 'run-shell'
