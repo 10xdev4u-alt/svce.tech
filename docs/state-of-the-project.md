@@ -3,6 +3,9 @@
 > **Purpose of this doc:** pick up work after a gap with zero context. Everything important about
 > what was built, how it works, what's broken, and what's next. Owner: 10xdev4u (git 10xdev4u-alt).
 > Last updated: 2026-08-05.
+>
+> **Operational playbook:** for the locked dev flow, every gotcha (commit chains, timezones, ghost
+> branches, feed routes), secrets, and pending items — read [`docs/agent-playbook.md`](agent-playbook.md) first.
 
 ---
 
