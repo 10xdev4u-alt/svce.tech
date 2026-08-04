@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -91,42 +92,60 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile sheet */}
+      {/* Mobile sheet + outside-click dismiss */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            id="mobile-nav"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="overflow-hidden border-t border-line/10 bg-surface shadow-lg lg:hidden"
-          >
-            <div className="container-page flex flex-col gap-1 py-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={pathname === link.href ? 'page' : undefined}
-                  className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
-                    pathname === link.href
-                      ? 'bg-aurora-100 text-aurora-800 dark:bg-aurora-900/40 dark:text-aurora-300'
-                      : 'text-ink/70 hover:bg-ink/5 hover:text-ink'
-                  }`}
+          <>
+            {createPortal(
+              <motion.div
+                key="mobile-nav-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                onClick={() => setMenuOpen(false)}
+                className="fixed inset-0 z-40 bg-transparent lg:hidden"
+                aria-hidden="true"
+              />,
+              document.body
+            )}
+            <motion.div
+              key="mobile-nav-sheet"
+              id="mobile-nav"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="relative z-50 overflow-hidden border-t border-line/10 bg-surface shadow-lg lg:hidden"
+            >
+              <div className="container-page flex flex-col gap-1 py-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    aria-current={pathname === link.href ? 'page' : undefined}
+                    className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
+                      pathname === link.href
+                        ? 'bg-aurora-100 text-aurora-800 dark:bg-aurora-900/40 dark:text-aurora-300'
+                        : 'text-ink/70 hover:bg-ink/5 hover:text-ink'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <a
+                  href={CONTRIBUTE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="mt-2 rounded-xl bg-ink px-4 py-3 text-center text-base font-medium text-on-accent shadow-sm transition-all hover:-translate-y-px hover:shadow-md"
                 >
-                  {link.label}
-                </Link>
-              ))}
-              <a
-                href={CONTRIBUTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 rounded-xl bg-ink px-4 py-3 text-center text-base font-medium text-on-accent shadow-sm transition-all hover:-translate-y-px hover:shadow-md"
-              >
-                Contribute on GitHub
-              </a>
-            </div>
-          </motion.div>
+                  Contribute on GitHub
+                </a>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
