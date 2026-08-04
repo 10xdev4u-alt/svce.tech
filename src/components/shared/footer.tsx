@@ -10,6 +10,9 @@ export default function Footer() {
           community
         </div>
         <div className="flex items-center gap-6 text-sm text-ink/60">
+          <Link href="/events/archive" className="transition-colors hover:text-aurora-700">
+            Past events
+          </Link>
           <Link href="/resources" className="transition-colors hover:text-aurora-700">
             Resources
           </Link>

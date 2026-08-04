@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
-import { CalendarBlank, Rss, SquaresFour } from '@phosphor-icons/react';
+import { Archive, CalendarBlank, Rss, SquaresFour } from '@phosphor-icons/react';
 import type { Event } from '@/types/event';
 import eventsJson from '@/data/events.json';
 import { partitionEvents } from '@/lib/events';
@@ -129,6 +130,16 @@ export default function Events() {
               Calendar
             </button>
           </div>
+
+          {/* Archive link */}
+          <Link
+            href="/events/archive"
+            className="flex items-center gap-1.5 rounded-xl border border-line/20 bg-surface-2 px-3 py-2 text-sm font-medium text-ink/70 shadow-sm transition-colors hover:bg-aurora-100 hover:text-aurora-800 dark:hover:bg-aurora-900/40 dark:hover:text-aurora-300"
+            title="Browse past events"
+          >
+            <Archive size={15} />
+            Past events
+          </Link>
 
           {/* Subscribe: iCal + RSS */}
           <div className="flex overflow-hidden rounded-xl border border-line/20 bg-surface-2 shadow-sm">

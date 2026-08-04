@@ -1,11 +1,15 @@
 import eventsJson from '@/data/events.json';
-import { buildIcs } from '@/lib/ical';
+import { buildIcs, filterFeedEvents } from '@/lib/ical';
+import type { Event } from '@/types/event';
 
-export const dynamic = 'force-static';
+// Rendered per-request (not force-static) so the grace-window trim uses a live clock;
+// the Cache-Control headers keep it edge-cached with stale-while-revalidate.
+export const dynamic = 'force-dynamic';
 
 export function GET() {
-  const events = eventsJson as Parameters<typeof buildIcs>[0];
-  const body = buildIcs(events);
+  const events = eventsJson as Event[];
+  // 48h post-event grace window: past events fall off the calendar feed.
+  const body = buildIcs(filterFeedEvents(events, new Date()));
 
   return new Response(body, {
     headers: {
