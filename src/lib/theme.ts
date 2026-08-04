@@ -10,8 +10,13 @@ export const themeInitScript = `(function(){try{var s=localStorage.getItem('${ST
 
 export function getStoredPreference(): ThemePreference | null {
   if (typeof window === 'undefined') return null;
-  const value = window.localStorage.getItem(STORAGE_KEY);
-  return value === 'light' || value === 'dark' || value === 'system' ? value : null;
+  try {
+    const value = window.localStorage.getItem(STORAGE_KEY);
+    return value === 'light' || value === 'dark' || value === 'system' ? value : null;
+  } catch {
+    // Storage blocked (private mode etc.) — fall back to system default
+    return null;
+  }
 }
 
 export function systemPrefersDark(): boolean {

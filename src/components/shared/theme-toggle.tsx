@@ -22,6 +22,8 @@ export default function ThemeToggle() {
     const onChange = () => {
       const current = getStoredPreference();
       if (!current || current === 'system') {
+        // Re-apply so the document actually follows the OS change
+        applyTheme('system');
         setIsDark(media.matches);
       }
     };
