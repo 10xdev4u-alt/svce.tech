@@ -30,6 +30,8 @@ jobs:
           node-version: '22'
 
       - name: Mirror upcoming events
+        # Skip until the webhook secret is configured (script exits 1 without it).
+        if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
         id: mirror
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
