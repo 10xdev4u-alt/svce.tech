@@ -15,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import type { Event } from '@/types/event';
 import { formatEventSchedule, getAlertTitle, getGoogleCalendarUrl } from '@/lib/events';
+import RemindMeButton from './remind-me-button';
 
 interface EventModalProps {
   event: Event;
@@ -169,6 +170,7 @@ export default function EventModal({ event, onClose }: EventModalProps) {
               <CalendarCheck size={16} weight="bold" />
               Add to calendar
             </a>
+            <RemindMeButton event={event} />
           </div>
 
           {/* Share */}

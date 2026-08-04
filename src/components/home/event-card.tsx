@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { CalendarDots, MapPin, Warning } from '@phosphor-icons/react';
 import type { Event } from '@/types/event';
 import { formatDate, formatTime, formatVenue, getAlertTitle } from '@/lib/events';
+import RemindMeButton from './remind-me-button';
 
 interface EventCardProps {
   event: Event;
@@ -100,11 +101,18 @@ export default function EventCard({ event, onOpen }: EventCardProps) {
             <span className="line-clamp-2">{venue}</span>
           </p>
 
-          <div className="mt-4 flex items-center justify-between border-t border-line/10 pt-3">
+          <div className="mt-4 flex items-center justify-between gap-2 border-t border-line/10 pt-3">
             <span className="text-xs font-medium text-aurora-700 transition-colors group-hover:text-aurora-800">
               View details →
             </span>
-            <span className="text-xs text-ink/40">tap to open</span>
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className="shrink-0"
+            >
+              <RemindMeButton event={event} compact />
+            </span>
           </div>
         </div>
       </div>
