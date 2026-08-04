@@ -26,9 +26,13 @@ function check(condition, message) {
 }
 
 function isValidDate(dateStr) {
+  // Strict calendar-date check that is timezone-safe (no toISOString round-trip,
+  // which would shift the day in positive UTC offsets).
   if (!DATE_RE.test(dateStr)) return false;
-  const date = new Date(dateStr + 'T00:00:00');
-  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === dateStr;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
 }
 
 function validateEvents(events) {
