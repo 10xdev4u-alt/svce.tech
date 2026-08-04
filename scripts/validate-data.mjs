@@ -1,22 +1,31 @@
 /**
  * Data validation for svce.tech
- * Checks events.json, communities.json and opportunities.json against their schemas.
- * Run with: node scripts/validate-data.mjs
+ * Checks events.json, communities.json, opportunities.json and resources.json
+ * against their schemas.
+ *
+ * Importable: the validator functions are exported for unit tests.
+ * CLI: run with `node scripts/validate-data.mjs` (guarded main below).
  */
 
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dataDir = join(__dirname, '..', 'src', 'data');
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const URL_RE = /^https?:\/\/.+/;
-const ALERT_TYPES = new Set(['postponed', 'venue-change', 'cancelled', 'general']);
-const OPPORTUNITY_TYPES = new Set(['internship', 'hackathon', 'job', 'research', 'scholarship']);
-const RESOURCE_CATEGORIES = new Set([
+export const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+export const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+export const URL_RE = /^https?:\/\/.+/;
+export const ALERT_TYPES = new Set(['postponed', 'venue-change', 'cancelled', 'general']);
+export const OPPORTUNITY_TYPES = new Set([
+  'internship',
+  'hackathon',
+  'job',
+  'research',
+  'scholarship'
+]);
+export const RESOURCE_CATEGORIES = new Set([
   'offcampus',
   'dsa',
   'interview',
@@ -26,15 +35,28 @@ const RESOURCE_CATEGORIES = new Set([
   'courses'
 ]);
 
-const failures = [];
-let checks = 0;
-
-function check(condition, message) {
-  checks++;
-  if (!condition) failures.push(message);
+/** Collector that records every failed check. */
+export function createChecker() {
+  const failures = [];
+  let checks = 0;
+  return {
+    check(condition, message) {
+      checks++;
+      if (!condition) failures.push(message);
+    },
+    get failures() {
+      return failures;
+    },
+    get checks() {
+      return checks;
+    },
+    get passed() {
+      return failures.length === 0;
+    }
+  };
 }
 
-function isValidDate(dateStr) {
+export function isValidDate(dateStr) {
   // Strict calendar-date check that is timezone-safe (no toISOString round-trip,
   // which would shift the day in positive UTC offsets).
   if (!DATE_RE.test(dateStr)) return false;
@@ -44,9 +66,10 @@ function isValidDate(dateStr) {
   return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
 }
 
-function validateEvents(events) {
+export function validateEvents(events, checker = createChecker()) {
+  const { check } = checker;
   check(Array.isArray(events), 'events.json must be an array');
-  if (!Array.isArray(events)) return;
+  if (!Array.isArray(events)) return checker;
 
   const names = new Set();
   events.forEach((event, i) => {
@@ -109,14 +132,16 @@ function validateEvents(events) {
 
     const key = `${event.eventName}|${event.eventDate}`;
     if (names.has(key))
-      failures.push(`${where}: duplicate event "${event.eventName}" on ${event.eventDate}`);
+      checker.failures.push(`${where}: duplicate event "${event.eventName}" on ${event.eventDate}`);
     names.add(key);
   });
+  return checker;
 }
 
-function validateCommunities(communities) {
+export function validateCommunities(communities, checker = createChecker()) {
+  const { check } = checker;
   check(Array.isArray(communities), 'communities.json must be an array');
-  if (!Array.isArray(communities)) return;
+  if (!Array.isArray(communities)) return checker;
 
   communities.forEach((community, i) => {
     const where = `community[${i}]`;
@@ -126,11 +151,13 @@ function validateCommunities(communities) {
       check(URL_RE.test(community.website), `${where}.website must be a valid URL`);
     if (community.logo) check(URL_RE.test(community.logo), `${where}.logo must be a valid URL`);
   });
+  return checker;
 }
 
-function validateOpportunities(opportunities) {
+export function validateOpportunities(opportunities, checker = createChecker()) {
+  const { check } = checker;
   check(Array.isArray(opportunities), 'opportunities.json must be an array');
-  if (!Array.isArray(opportunities)) return;
+  if (!Array.isArray(opportunities)) return checker;
 
   opportunities.forEach((opp, i) => {
     const where = `opportunity[${i}]`;
@@ -155,11 +182,13 @@ function validateOpportunities(opportunities) {
     if (opp.deadline) check(isValidDate(opp.deadline), `${where}.deadline must be YYYY-MM-DD`);
     check(isValidDate(opp.postedDate), `${where}.postedDate must be YYYY-MM-DD`);
   });
+  return checker;
 }
 
-function validateResources(resources) {
+export function validateResources(resources, checker = createChecker()) {
+  const { check } = checker;
   check(Array.isArray(resources), 'resources.json must be an array');
-  if (!Array.isArray(resources)) return;
+  if (!Array.isArray(resources)) return checker;
 
   const titles = new Set();
   resources.forEach((resource, i) => {
@@ -186,36 +215,51 @@ function validateResources(resources) {
       );
     }
     if (titles.has(resource.title))
-      failures.push(`${where}: duplicate resource "${resource.title}"`);
+      checker.failures.push(`${where}: duplicate resource "${resource.title}"`);
     titles.add(resource.title);
   });
+  return checker;
 }
 
-const files = [
-  { file: 'events.json', validate: validateEvents },
-  { file: 'communities.json', validate: validateCommunities },
-  { file: 'opportunities.json', validate: validateOpportunities },
-  { file: 'resources.json', validate: validateResources }
-];
+/** Validate all data files on disk. Returns a checker. */
+export function validateAllData() {
+  const checker = createChecker();
+  const files = [
+    { file: 'events.json', validate: validateEvents },
+    { file: 'communities.json', validate: validateCommunities },
+    { file: 'opportunities.json', validate: validateOpportunities },
+    { file: 'resources.json', validate: validateResources }
+  ];
 
-for (const { file, validate } of files) {
-  try {
-    const raw = readFileSync(join(dataDir, file), 'utf8');
-    validate(JSON.parse(raw));
-    console.log(`✅ ${file} parsed and checked`);
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      failures.push(`${file} is not valid JSON: ${error.message}`);
-    } else {
-      failures.push(`${file} could not be read: ${error.message}`);
+  for (const { file, validate } of files) {
+    try {
+      const raw = readFileSync(join(dataDir, file), 'utf8');
+      validate(JSON.parse(raw), checker);
+      console.log(`✅ ${file} parsed and checked`);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        checker.failures.push(`${file} is not valid JSON: ${error.message}`);
+      } else {
+        checker.failures.push(`${file} could not be read: ${error.message}`);
+      }
     }
   }
+  return checker;
 }
 
-if (failures.length > 0) {
-  console.error(`\n❌ ${failures.length} validation failure(s) out of ${checks} checks:\n`);
-  failures.forEach((failure) => console.error(`  - ${failure}`));
-  process.exit(1);
-}
+// Guard: only run the CLI when executed directly (not when imported by tests).
+const isMain =
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === fileURLToPath(pathToFileURL(process.argv[1]));
 
-console.log(`\n🎉 All data valid — ${checks} checks passed.`);
+if (isMain) {
+  const checker = validateAllData();
+  if (!checker.passed) {
+    console.error(
+      `\n❌ ${checker.failures.length} validation failure(s) out of ${checker.checks} checks:\n`
+    );
+    checker.failures.forEach((failure) => console.error(`  - ${failure}`));
+    process.exit(1);
+  }
+  console.log(`\n🎉 All data valid — ${checker.checks} checks passed.`);
+}
