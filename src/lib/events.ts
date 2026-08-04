@@ -109,3 +109,46 @@ export function partitionEvents(
   });
   return { monthly, upcoming };
 }
+
+/** End-of-event as a local Date (end time when given, else end of the event's last day). */
+export function getEventEndDate(event: Event): Date {
+  const end = new Date((event.eventEndDate ?? event.eventDate) + 'T00:00:00');
+  if (event.eventEndTime) {
+    const [h, m] = event.eventEndTime.split(':').map(Number);
+    if (!Number.isNaN(h) && !Number.isNaN(m)) end.setHours(h, m, 0, 0);
+  } else {
+    end.setHours(23, 59, 59, 999);
+  }
+  return end;
+}
+
+/** True once an event has fully finished (end time passed). */
+export function isPastEvent(event: Event, now: Date): boolean {
+  return getEventEndDate(event).getTime() < now.getTime();
+}
+
+/** Past events, newest-first — the source for the archive page. */
+export function partitionPastEvents(events: Event[], now: Date): Event[] {
+  return events
+    .filter((event) => isPastEvent(event, now))
+    .sort((a, b) => getEventEndDate(b).getTime() - getEventEndDate(a).getTime());
+}
+
+/** Human label for how long ago an event ended ("Ended today" / "Ended 3 days ago"). */
+export function getEndedLabel(event: Event, now: Date): string {
+  const end = getEventEndDate(event);
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const days = Math.round((today - endDay) / 86_400_000);
+  if (days <= 0) return 'Ended today';
+  if (days === 1) return 'Ended yesterday';
+  return `Ended ${days} days ago`;
+}
+
+/** Month + year label for grouping an archive ("August 2026"). */
+export function getEventMonthLabel(event: Event): string {
+  return getEventEndDate(event).toLocaleDateString('en-IN', {
+    month: 'long',
+    year: 'numeric'
+  });
+}
