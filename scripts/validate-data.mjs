@@ -16,6 +16,15 @@ const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const URL_RE = /^https?:\/\/.+/;
 const ALERT_TYPES = new Set(['postponed', 'venue-change', 'cancelled', 'general']);
 const OPPORTUNITY_TYPES = new Set(['internship', 'hackathon', 'job', 'research', 'scholarship']);
+const RESOURCE_CATEGORIES = new Set([
+  'offcampus',
+  'dsa',
+  'interview',
+  'aptitude',
+  'resume',
+  'opensource',
+  'courses'
+]);
 
 const failures = [];
 let checks = 0;
@@ -148,10 +157,45 @@ function validateOpportunities(opportunities) {
   });
 }
 
+function validateResources(resources) {
+  check(Array.isArray(resources), 'resources.json must be an array');
+  if (!Array.isArray(resources)) return;
+
+  const titles = new Set();
+  resources.forEach((resource, i) => {
+    const where = `resource[${i}]`;
+    check(typeof resource === 'object' && resource !== null, `${where} must be an object`);
+    check(typeof resource.title === 'string' && resource.title.trim(), `${where}.title required`);
+    check(
+      RESOURCE_CATEGORIES.has(resource.category),
+      `${where}.category must be one of ${[...RESOURCE_CATEGORIES].join(', ')}`
+    );
+    check(
+      typeof resource.description === 'string' && resource.description.trim(),
+      `${where}.description required`
+    );
+    check(
+      typeof resource.link === 'string' && URL_RE.test(resource.link),
+      `${where}.link must be a valid URL`
+    );
+    if (resource.tags) {
+      check(Array.isArray(resource.tags), `${where}.tags must be an array`);
+      check(
+        resource.tags.every((tag) => typeof tag === 'string' && tag.trim()),
+        `${where}.tags must all be non-empty strings`
+      );
+    }
+    if (titles.has(resource.title))
+      failures.push(`${where}: duplicate resource "${resource.title}"`);
+    titles.add(resource.title);
+  });
+}
+
 const files = [
   { file: 'events.json', validate: validateEvents },
   { file: 'communities.json', validate: validateCommunities },
-  { file: 'opportunities.json', validate: validateOpportunities }
+  { file: 'opportunities.json', validate: validateOpportunities },
+  { file: 'resources.json', validate: validateResources }
 ];
 
 for (const { file, validate } of files) {
