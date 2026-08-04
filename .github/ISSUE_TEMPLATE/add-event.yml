@@ -1,0 +1,73 @@
+name: '📅 Add an Event'
+description: 'Suggest a tech event around SVCE or nearby Chennai — it goes live via a 2-minute PR.'
+title: 'event: [Event name] on [YYYY-MM-DD]'
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for growing the community! Fill this out and a maintainer (or you) can open the quick PR.
+        The JSON template lives in [`CONTRIBUTING.md`](../../CONTRIBUTING.md#quick-start-add-an-event).
+  - type: input
+    id: name
+    attributes:
+      label: Event name
+      placeholder: "PULSE '26 — National Symposium"
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date (YYYY-MM-DD)
+      placeholder: '2026-09-18'
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: Start time (24h HH:MM)
+      placeholder: '09:30'
+    validations:
+      required: true
+  - type: input
+    id: venue
+    attributes:
+      label: Venue
+      placeholder: 'SVCE Main Auditorium'
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Registration / info link
+      placeholder: 'https://...'
+    validations:
+      required: true
+  - type: input
+    id: community
+    attributes:
+      label: Organizing community
+      placeholder: 'IEEE SVCE Student Branch'
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Short description
+      placeholder: '1–2 sentences about the event.'
+    validations:
+      required: true
+  - type: input
+    id: end
+    attributes:
+      label: End date + time (optional)
+      placeholder: '2026-09-19 17:00'
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: 'The link is real and the event is verified (no fake data — house rule)'
+          required: true
+        - label: 'OK for this to be added to `src/data/events.json` via pull request'
+          required: true

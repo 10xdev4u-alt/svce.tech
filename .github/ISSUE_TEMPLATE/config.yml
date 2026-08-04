@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SVCE Tech Hub
+    url: https://svce-tech.vercel.app
+    about: Check the live site before filing a bug or feature request
