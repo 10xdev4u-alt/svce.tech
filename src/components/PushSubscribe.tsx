@@ -120,7 +120,7 @@ export default function PushSubscribe() {
       {promptOpen &&
         !isSubscribed &&
         createPortal(
-          <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-aurora-200 bg-surface-2 p-4 shadow-2xl">
+          <div className="fixed bottom-5 right-5 z-[60] w-80 max-w-[calc(100vw-2.5rem)] rounded-2xl border border-aurora-200 bg-surface-2 p-4 shadow-2xl">
             <div className="flex items-start gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-aurora-100 text-aurora-700">
                 <Bell size={18} weight="fill" />
@@ -183,7 +183,7 @@ export default function PushSubscribe() {
 
       {error &&
         createPortal(
-          <div className="fixed bottom-5 right-5 z-[60] w-80 rounded-2xl border border-red-200 bg-surface-2 p-4 shadow-2xl">
+          <div className="fixed bottom-5 right-5 z-[60] w-80 max-w-[calc(100vw-2.5rem)] rounded-2xl border border-red-200 bg-surface-2 p-4 shadow-2xl">
             <p className="text-sm font-semibold text-red-700">Something went wrong</p>
             <p className="mt-1 text-xs text-ink/60">{error}</p>
             <button
