@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "title": "MLH Fellowship — Fall 2026 Cohort",
+    "type": "internship",
+    "organization": "Major League Hacking (MLH) & GitHub Education",
+    "description": "A fully remote, 12-week internship alternative where student developers collaborate on real open-source projects from major tech companies under expert mentorship. Includes an educational stipend.",
+    "link": "https://fellowship.mlh.com/",
+    "deadline": "2026-08-31",
+    "postedDate": "2026-08-04"
+  },
+  {
+    "title": "Hacktoberfest 2026",
+    "type": "hackathon",
+    "organization": "DigitalOcean · GitHub · GitLab · MLH",
+    "description": "The global month-long open-source celebration. Submit quality pull requests to public repositories tagged 'hacktoberfest' and earn digital badges and rewards. Open to all skill levels.",
+    "link": "https://hacktoberfest.com/",
+    "deadline": "2026-10-31",
+    "postedDate": "2026-08-04"
+  },
+  {
+    "title": "Smart India Hackathon 2026",
+    "type": "hackathon",
+    "organization": "Ministry of Education's Innovation Cell · AICTE · Government of India",
+    "description": "India's flagship nationwide hackathon. Solve real-world challenges from ministries, PSUs and industries. Colleges conduct internal campus hackathons to nominate teams to the national portal.",
+    "link": "https://sih.gov.in/",
+    "postedDate": "2026-08-04"
+  },
+  {
+    "title": "GSSoC 2026 — Open Source & AI Builders Program",
+    "type": "scholarship",
+    "organization": "GirlScript Foundation",
+    "description": "One of the world's largest free open-source and AI builder programs. Contribute to open source or build AI agents (Agents for India track) with cash prizes up to ₹50,000, swags and certificates.",
+    "link": "https://gssoc.girlscript.org/",
+    "postedDate": "2026-08-04"
+  }
+]
