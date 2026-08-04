@@ -140,8 +140,7 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 | Phase | Scope |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- || **7 · Mobile & dark mode** | ✅ **Shipped 2026-08-04** — tokens, toggle, hamburger nav (default = light since 2026-08-05) |
-| **8 · Community & flow locks** | ✅ **Shipped 2026-08-05** — PR template, branch protection, title gate, Dependabot, CodeRabbit, issue templates, CONTRIBUTING flow || **9 · Testing & reliability** | ✅ **Shipped 2026-08-05** — vitest unit tests (44) for `lib/events.ts` + `validate-data.mjs`, Playwright E2E smoke (9) wired into CI as a required job |
-| **10 · Growth** | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror |
+| **8 · Community & flow locks** | ✅ **Shipped 2026-08-05** — PR template, branch protection, title gate, Dependabot, CodeRabbit, issue templates, CONTRIBUTING flow || **9 · Testing & reliability** | ✅ **Shipped 2026-08-05** — vitest unit tests (44) for `lib/events.ts` + `validate-data.mjs`, Playwright E2E smoke (9) wired into CI as a required job || **10 · Growth** | ✅ **Partially shipped 2026-08-05** — iCal feed (`/events.ics`) + RSS (`/feed.xml`) with subscribe links on the events section. Remaining: per-event "remind me" push, past-events archive, Telegram/Discord bot mirror |
 
 ---
 
