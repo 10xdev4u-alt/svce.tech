@@ -119,3 +119,48 @@ test.describe('subscription feeds', () => {
     await expect(page.getByRole('link', { name: 'RSS' })).toBeVisible();
   });
 });
+
+test.describe('remind me', () => {
+  test('card shows a remind-me button', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Remind me' }).first()).toBeVisible();
+  });
+
+  test('without a push subscription, the menu prompts to enable notifications', async ({
+    page
+  }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Remind me' }).first().click();
+    await expect(page.getByText('Enable notifications first')).toBeVisible();
+  });
+
+  test('setting a reminder shows the set state', async ({ page }) => {
+    // Stub a push subscription so ensureSubscribed() treats the user as subscribed.
+    await page.addInitScript(() => {
+      Object.defineProperty(Notification, 'permission', { value: 'granted' });
+      const fakePushManager = {
+        getSubscription: async () => ({
+          endpoint: 'https://fake.push.example/sub',
+          keys: { p256dh: 'a', auth: 'b' }
+        })
+      };
+      const fakeRegistration = { pushManager: fakePushManager };
+      Object.defineProperty(navigator, 'serviceWorker', {
+        configurable: true,
+        value: {
+          getRegistration: async () => fakeRegistration
+        }
+      });
+    });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Remind me' }).first().click();
+    await page.getByRole('menuitem', { name: /1 hour before/ }).click();
+    // Production-only API call is skipped in dev, but the local state persists.
+    await expect(page.getByRole('button', { name: 'Reminder set' }).first()).toBeVisible({
+      timeout: 5000
+    });
+    // Clicking again cancels.
+    await page.getByRole('button', { name: 'Reminder set' }).first().click();
+    await expect(page.getByRole('button', { name: 'Remind me' }).first()).toBeVisible();
+  });
+});

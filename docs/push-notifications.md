@@ -54,15 +54,45 @@ Then update Vercel env vars and GitHub secrets.
 2. Enter title/body/url
 3. Leave **test mode** on (sends to first 3 subscribers only)
 
+## Per-event "remind me" push (Phase 10)
+
+Users can set a reminder on any event card/modal (**at start / 1 hour before / 1 day before**).
+Reminders are scheduled server-side — the Notification Triggers API was removed from Chrome and
+client-side SW timers are unreliable, so a **GitHub Actions cron workflow** does the sending.
+
+```
+[User clicks Remind me on a card]
+  → localStorage (UI state, always)
+  → /api/save-reminder (production only)
+  → repository_dispatch save_reminder
+  → manage-reminders.yml writes reminders/<id>.json
+     (id = <subscriptionId>-<hash(eventName|eventDate)>)
+
+[Every 10 minutes]
+  → send-reminders.yml (cron */10)
+  → scans reminders/*.json for remindAt <= now
+  → sends web-push to that subscription, deletes the handled file
+```
+
+- Cancel via `/api/cancel-reminder` → dispatch `remove_reminder` → file deleted.
+- Reminders are pruned by the same workflow (a failed/expired reminder file stays until due).
+- Cron min granularity is 5 min; GitHub pauses cron after 60 days of repo inactivity.
+
 ## Files
 
 - `src/components/PushSubscribe.tsx` — bell button + prompt (single instance)
+- `src/components/home/remind-me-button.tsx` — per-event reminder button + offset menu (portaled to body)
+- `src/lib/reminders.ts` — offsets, remind-at computation, reminder IDs
 - `public/sw.js` — service worker (push + notificationclick)
 - `src/app/api/save-subscription/route.ts` — register a subscription
 - `src/app/api/remove-subscription/route.ts` — unregister a subscription
+- `src/app/api/save-reminder/route.ts` — save a per-event reminder
+- `src/app/api/cancel-reminder/route.ts` — cancel a per-event reminder
 - `src/lib/webpush.ts` — VAPID config + send helpers
 - `.github/workflows/manage-subscriptions.yml` — save/remove files in subs repo
+- `.github/workflows/manage-reminders.yml` — save/remove reminder files in subs repo
 - `.github/workflows/send-notifications.yml` — send to all subscribers + prune 410s
+- `.github/workflows/send-reminders.yml` — cron sender for due reminders
 
 ## Notes
 
