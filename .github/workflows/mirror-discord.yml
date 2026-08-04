@@ -1,0 +1,58 @@
+name: Mirror Events to Discord
+
+on:
+  schedule:
+    # Every 6 hours (17 past the hour to spread load). New events also trigger
+    # on push, so announcements are near-immediate when data changes.
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/data/events.json'
+
+jobs:
+  mirror-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Checkout state repo
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ secrets.SUBSCRIPTION_REPO }}
+          token: ${{ secrets.GH_DB_PAT }}
+          path: subs-repo
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Mirror upcoming events
+        id: mirror
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          node scripts/mirror-discord.mjs \
+            --events src/data/events.json \
+            --state subs-repo/discord-state.json
+          echo "state written" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit state
+        run: |
+          cd subs-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add discord-state.json
+          if git diff --cached --quiet; then
+            echo "No state change to commit"
+          else
+            git commit -m "mirror discord: update posted events state"
+            git push
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Discord Mirror" >> $GITHUB_STEP_SUMMARY
+          echo "Mirrored to the channel webhook." >> $GITHUB_STEP_SUMMARY
