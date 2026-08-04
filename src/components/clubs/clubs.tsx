@@ -1,7 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { MagnifyingGlass, XSquare } from '@phosphor-icons/react';
+import {
+  GithubLogo,
+  Globe,
+  InstagramLogo,
+  LinkedinLogo,
+  MagnifyingGlass,
+  XSquare
+} from '@phosphor-icons/react';
 import communities from '@/data/communities.json';
 import type { Community } from '@/types/event';
 
@@ -72,6 +79,13 @@ function ClubCard({ club }: { club: Community }) {
     .map((w) => w[0])
     .join('');
 
+  const socials = [
+    club.website && { href: club.website, label: 'Website', icon: Globe },
+    club.instagram && { href: club.instagram, label: 'Instagram', icon: InstagramLogo },
+    club.linkedin && { href: club.linkedin, label: 'LinkedIn', icon: LinkedinLogo },
+    club.github && { href: club.github, label: 'GitHub', icon: GithubLogo }
+  ].filter((s): s is { href: string; label: string; icon: typeof Globe } => Boolean(s));
+
   return (
     <article className="group flex h-full gap-4 rounded-2xl border border-line/10 bg-surface-2 p-6 shadow-card transition-all hover:-translate-y-1 hover:border-aurora-400/40 hover:shadow-card-hover">
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sunrise-100 to-aurora-100 font-display text-lg font-bold text-aurora-800 transition-transform duration-300 group-hover:scale-105 dark:from-amber-950/60 dark:to-emerald-950/60 dark:text-aurora-300">
@@ -86,6 +100,23 @@ function ClubCard({ club }: { club: Community }) {
           <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-ink/60">
             {club.description}
           </p>
+        )}
+        {socials.length > 0 && (
+          <div className="mt-4 flex items-center gap-1 border-t border-line/10 pt-3">
+            {socials.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                title={social.label}
+                className="rounded-lg p-2 text-ink/50 transition-colors hover:bg-aurora-100 hover:text-aurora-800 dark:hover:bg-aurora-900/40 dark:hover:text-aurora-300"
+              >
+                <social.icon size={16} />
+              </a>
+            ))}
+          </div>
         )}
       </div>
     </article>
