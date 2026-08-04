@@ -5,7 +5,8 @@ import PushSubscribe from '../PushSubscribe';
 const navLinks = [
   { href: '/', label: 'Events' },
   { href: '/clubs', label: 'Clubs' },
-  { href: '/opportunities', label: 'Opportunities' }
+  { href: '/opportunities', label: 'Opportunities' },
+  { href: '/resources', label: 'Resources' }
 ];
 
 export default function Header() {
