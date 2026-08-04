@@ -2,16 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Design tokens ----------
+   Light is the default; dark is applied via `.dark` on <html>.
+   The resolved theme (system preference + manual override) is set
+   FOUC-safe by the inline script in layout.tsx before first paint.
+   Tokens are RGB triplets so Tailwind `<alpha-value>` works (e.g. bg-surface-2/60). */
+
 :root {
-  --background: #fbfbf7;
-  --foreground: #0f172a;
+  --surface: 251 251 247; /* page background */
+  --surface-2: 255 255 255; /* cards, panels */
+  --ink: 15 23 42; /* primary text + accent surface */
+  --line: 15 23 42; /* hairline borders (used at low alpha) */
+  --overlay: 15 23 42; /* scrims */
+  --on-accent: 255 255 255; /* text sitting on ink surfaces */
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-  }
+html.dark {
+  --surface: 15 23 42;
+  --surface-2: 30 41 59;
+  --ink: 241 245 249;
+  --line: 148 163 184;
+  --overlay: 2 6 23;
+  --on-accent: 15 23 42;
+  color-scheme: dark;
 }
 
 html {
@@ -19,13 +33,21 @@ html {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: rgb(var(--ink));
+  background: rgb(var(--surface));
 }
 
 ::selection {
   background-color: #bbf7d0;
   color: #14532d;
+}
+
+/* Visible keyboard/touch focus ring everywhere (Phase 7 cross-cutting) */
+@layer base {
+  :focus-visible {
+    outline: 2px solid rgb(var(--ink) / 0.65);
+    outline-offset: 2px;
+  }
 }
 
 @layer components {
@@ -35,5 +57,18 @@ body {
 
   .chip {
     @apply inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium;
+  }
+}
+
+/* Dark mode: lift the low-opacity muted text tiers. --ink flips to near-white,
+   so /40 and /50 read dimmer against dark surfaces than in light mode — this
+   keeps small tertiary text (footers, hints, timestamps) at ~4.5:1 contrast. */
+@layer utilities {
+  .dark .text-ink\/40 {
+    color: rgb(var(--ink) / 0.55);
+  }
+
+  .dark .text-ink\/50 {
+    color: rgb(var(--ink) / 0.68);
   }
 }

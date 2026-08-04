@@ -228,6 +228,25 @@ export default function SearchPalette() {
       e.preventDefault();
       const target = resultItems[activeIdx];
       if (target) select(target.result);
+    } else if (e.key === 'Tab') {
+      // Simple focus trap so Tab cycles within the aria-modal dialog
+      const dialog = e.currentTarget.closest('[role="dialog"]');
+      if (!dialog) return;
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button, input, [href], [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   }
 
@@ -248,12 +267,12 @@ export default function SearchPalette() {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-black/10 bg-white/70 px-3 py-2 text-sm text-ink/50 transition-all hover:border-aurora-500/40 hover:text-ink"
+        className="flex items-center gap-2 rounded-lg border border-line/20 bg-surface-2/70 px-3 py-2 text-sm text-ink/50 transition-all hover:border-aurora-500/40 hover:text-ink"
         aria-label="Search events, clubs, opportunities and resources"
       >
         <MagnifyingGlass size={16} />
         <span className="hidden md:inline">Search</span>
-        <kbd className="hidden rounded border border-black/10 bg-white px-1.5 py-0.5 text-[10px] font-medium text-ink/40 md:inline">
+        <kbd className="hidden rounded border border-line/20 bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-ink/40 md:inline">
           ⌘K
         </kbd>
       </button>
@@ -261,19 +280,19 @@ export default function SearchPalette() {
       {open &&
         createPortal(
           <div
-            className="fixed inset-0 z-[60] flex items-start justify-center bg-ink/40 p-4 pt-[12vh] backdrop-blur-sm"
+            className="fixed inset-0 z-[60] flex items-start justify-center bg-overlay/40 p-4 pt-[12vh] backdrop-blur-sm"
             onClick={() => setOpen(false)}
             role="presentation"
           >
             <div
-              className="w-full max-w-xl overflow-hidden rounded-2xl border border-black/5 bg-white shadow-2xl"
+              className="w-full max-w-xl overflow-hidden rounded-2xl border border-line/10 bg-surface-2 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-label="Search"
             >
               {/* Input */}
-              <div className="flex items-center gap-3 border-b border-black/5 px-4">
+              <div className="flex items-center gap-3 border-b border-line/10 px-4">
                 <MagnifyingGlass size={20} className="shrink-0 text-ink/40" />
                 <input
                   ref={inputRef}
@@ -371,16 +390,16 @@ export default function SearchPalette() {
               </div>
 
               {/* Footer hints */}
-              <div className="flex items-center gap-4 border-t border-black/5 px-4 py-2.5 text-[11px] text-ink/40">
+              <div className="flex items-center gap-4 border-t border-line/10 px-4 py-2.5 text-[11px] text-ink/40">
                 <span>
-                  <kbd className="rounded border border-black/10 bg-white px-1">↑</kbd>{' '}
-                  <kbd className="rounded border border-black/10 bg-white px-1">↓</kbd> navigate
+                  <kbd className="rounded border border-line/20 bg-surface-2 px-1">↑</kbd>{' '}
+                  <kbd className="rounded border border-line/20 bg-surface-2 px-1">↓</kbd> navigate
                 </span>
                 <span>
-                  <kbd className="rounded border border-black/10 bg-white px-1">↵</kbd> open
+                  <kbd className="rounded border border-line/20 bg-surface-2 px-1">↵</kbd> open
                 </span>
                 <span>
-                  <kbd className="rounded border border-black/10 bg-white px-1">esc</kbd> close
+                  <kbd className="rounded border border-line/20 bg-surface-2 px-1">esc</kbd> close
                 </span>
               </div>
             </div>

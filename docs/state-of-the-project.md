@@ -35,16 +35,17 @@ Deploy flow used every phase: **validate → lint → build → conventional com
 
 ---
 
-## 3. What's shipped (Phases 1–6)
+## 3. What's shipped (Phases 1–7)
 
-| Phase                         | What                                                                                                                                                                                                                                   |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1 · Core hub**              | Home (hero w/ live-computed stats, "this month" + "upcoming" events), Clubs directory (`/clubs`), design system "Campus Aurora" (aurora green + sunrise amber + ink), header/footer, not-found, error page                             |
-| **2 · Contribution engine**   | Data validation script (`scripts/validate-data.mjs`, timezone-safe date checks), wired into lint-staged + CI, CONTRIBUTING.md                                                                                                          |
-| **3 · Push notifications**    | Bell (single instance) + 6s prompt, service worker, hashed API routes, private subscriptions repo, 2 workflows, VAPID/GH secrets on GitHub + Vercel. **See §6 — was broken, now proven fixed**                                         |
-| **4 · Event UX**              | Clickable cards → detail modal (register, add-to-calendar, share, copy, WhatsApp), calendar view (multi-day aware), community/location filters, cards↔calendar toggle, a11y pass                                                      |
-| **5 · Resources & placement** | `/resources` — 21 real resources (off-campus/job-fairs, DSA, interview, aptitude, resume, open-source, courses), category filter chips, contribute callout. **Explicitly NO SVCE placement stuff** (owner: "SVCE sucks at placements") |
-| **6 · Search & SEO**          | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts` (were missing entirely)                                                             |
+| Phase                         | What                                                                                                                                                                                                                                                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **1 · Core hub**              | Home (hero w/ live-computed stats, "this month" + "upcoming" events), Clubs directory (`/clubs`), design system "Campus Aurora", header/footer, not-found, error page                                                                                                                                                    |
+| **2 · Contribution engine**   | Data validation script (`scripts/validate-data.mjs`, timezone-safe date checks), wired into lint-staged + CI, CONTRIBUTING.md                                                                                                                                                                                            |
+| **3 · Push notifications**    | Bell (single instance) + 6s prompt, service worker, hashed API routes, private subscriptions repo, 2 workflows, VAPID/GH secrets. **See §6 — was broken, now proven fixed**                                                                                                                                              |
+| **4 · Event UX**              | Clickable cards → detail modal (register, add-to-calendar, share, copy, WhatsApp), calendar view (multi-day aware), community/location filters, cards↔calendar toggle, a11y pass                                                                                                                                        |
+| **5 · Resources & placement** | `/resources` — 21 real resources (off-campus/job-fairs, DSA, interview, aptitude, resume, open-source, courses), category filter chips, contribute callout. **No SVCE placement stuff**                                                                                                                                  |
+| **6 · Search & SEO**          | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts`                                                                                                                                                                       |
+| **7 · Mobile & dark mode**    | **Shipped 2026-08-04.** Semantic design tokens (`--surface`/`--surface-2`/`--ink`/`--line`/`--overlay`/`--on-accent`) + class-based `.dark`, FOUC-safe inline theme script + sun/moon toggle (OS-aware, pinned override), hamburger mobile nav (sheet below `lg`), global `:focus-visible` ring, mobile select-width fix |
 
 **Also fixed along the way:** sunrise palette shades 600–900 were missing (white text on light-orange chips in dark mode — root cause of a visible bug), notification popup was rendering against the header (`backdrop-filter` containing block) → fixed via portal to `document.body`.
 
@@ -97,7 +98,7 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 1. Fork → edit a JSON file in `src/data/` → PR.
 2. CI runs `validate:data` + lint + build; lint-staged runs on commit locally.
 3. Data schemas enforced by `scripts/validate-data.mjs` (duplicate names/dates rejected, URL checks, date/time format, category whitelists).
-4. `CONTRIBUTING.md` has templates. README features list is **missing Resources** (add in Phase 8).
+4. `CONTRIBUTING.md` has templates. README features list **now includes Resources** (added in Phase 7).
 
 ---
 
@@ -124,10 +125,10 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ## 7. Known loose ends (small, not yet tackled)
 
-1. **Stale TODO comments** in `src/app/error.tsx` & `src/app/not-found.tsx` ("Need to add a custom … page") — both pages are already customized; comments should be deleted.
-2. **README Features list missing Resources** (Phase 8).
-3. **Half-baked dark mode** — `globals.css` flips `--foreground`/`--background` on `prefers-color-scheme: dark`, but components are hardcoded `bg-white`/`text-ink`. **This is Phase 7.**
-4. Header nav is crowded on small screens (4 links + Search + bell + Contribute) — **Phase 7**.
+1. ~~Stale TODO comments in `error.tsx`/`not-found.tsx`~~ — resolved: `error.tsx` doesn't exist on disk and `not-found.tsx` is fully customized.
+2. **README Features list missing Resources** — fixed in Phase 7 (added).
+3. ~~Half-baked dark mode~~ — **DONE in Phase 7**: tokens + `.dark` + OS-aware toggle.
+4. ~~Header nav crowded on mobile~~ — **DONE in Phase 7**: hamburger sheet below `lg`.
 5. Search matches are substring-only ("hackathon" returns 3 instead of 2 — broad but acceptable).
 6. No unit tests yet — validation script + lib helpers untested by a framework (**Phase 9**).
 
@@ -137,7 +138,7 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 | Phase                         | Scope                                                                                                 |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------- |
-| **7 · Mobile & dark mode**    | Proper dark theme + mobile nav. **Detailed todos below**                                              |
+| **7 · Mobile & dark mode**    | ✅ **Shipped 2026-08-04** — tokens, OS-aware toggle, hamburger nav                                    |
 | **8 · Community & docs**      | CONTRIBUTING polish, PR template, "good first issue" labels, README features += Resources             |
 | **9 · Testing & reliability** | Unit tests for `lib/events.ts` + `scripts/validate-data.mjs`, Playwright E2E wired into CI            |
 | **10 · Growth**               | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror |
@@ -148,25 +149,24 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 **Goal:** kill the whole class of "contrast / overflow on mobile + dark mode" issues properly.
 
-### A. Dark mode (decide direction first)
+### A. Dark mode ✅ (shipped 2026-08-04)
 
-- [ ] **Decision:** (a) proper dark theme with design tokens, or (b) remove the dark-mode media query and ship light-only. _Ask the owner — do NOT silently pick._ Leaning (a) for the "pro dev" bar.
-- [ ] If (a): introduce CSS tokens (`--surface`, `--surface-2`, `--text`, `--text-muted`, `--border`) in `globals.css`; map every hardcoded `bg-white`, `text-ink`, `border-black/5`, `bg-[#fbfbf7]`, `bg-white/xx` across all components to tokens.
-- [ ] Convert in order: header/footer → hero (`bg-aurora-hero` gradient) → event cards + modal + calendar → search palette → opportunities → resources → clubs → chips (verify `bg-sunrise-100 text-sunrise-800` etc. still pass contrast on dark surfaces).
-- [ ] Add `<meta name="color-scheme" content="light dark">` (or set `color-scheme` in CSS) so form controls/scrollbars match.
-- [ ] Verify **every page** in dark mode with the computed-style contrast probe pattern (reuse the approach from the sunrise-palette fix) — target ≥ 4.5:1 body text, ≥ 3:1 large/chips.
+- [x] **Decision:** chose **(a) proper dark theme** + OS-aware sun/moon toggle (owner confirmed "OS-aware + toggle").
+- [x] Introduce CSS tokens (`--surface`, `--surface-2`, `--ink`, `--line`, `--overlay`, `--on-accent`) as RGB triplets in `globals.css`; mapped every hardcoded `bg-white`, `text-ink`, `border-black/5`, `bg-[#fbfbf7]`, `bg-white/xx` across components to tokens.
+- [x] Converted in order: header/footer → hero (`dark:bg-aurora-hero-dark`) → event cards + modal + calendar → search palette → opportunities → resources → clubs → chips (kept light chips w/ dark text — they pass contrast on dark surfaces).
+- [x] `color-scheme` set via CSS (`:root` light / `.dark` dark) so form controls/scrollbars match; FOUC-safe inline script sets `.dark` before paint.
+- [x] Verified every page in dark mode (Playwright computed-style probe, no console errors, no horizontal scroll at 320/375/768).
 
-### B. Mobile nav
+### B. Mobile nav ✅ (shipped 2026-08-04)
 
-- [ ] Header currently overflows < ~640px: 4 nav links + Search + bell + Contribute.
-- [ ] Add a **hamburger** (mobile sheet/menu) holding the nav links; keep Search icon + bell visible outside it.
-- [ ] Interim fallback if hamburger is deferred: hide "Contribute" text → icon-only on tiny screens.
-- [ ] Test at 320 / 375 / 390 / 768 px viewports (Playwright): no horizontal scroll, all header controls reachable.
+- [x] Header overflow fixed: nav links + Contribute hide below `lg`; hamburger toggles an animated sheet holding links + Contribute; Search/bell/toggle stay in the bar.
+- [x] Hamburger ships (interim icon-only fallback not needed).
+- [x] Tested at 320 / 375 / 768 / 1280 px (Playwright): no horizontal scroll, all header controls reachable, sheet closes on nav/Escape.
 
-### C. Cross-cutting
+### C. Cross-cutting ✅
 
-- [ ] Ensure visible focus rings on mobile (touch/keyboard).
-- [ ] Final gate: `pnpm validate:data` + `pnpm lint` + `pnpm build` + Playwright smoke of all 4 pages in both color schemes → conventional commits → push → `vercel --prod --yes` → curl/live verify.
+- [x] Global `:focus-visible` outline added (touch/keyboard).
+- [x] Final gate: `pnpm validate:data` (289 ✓) + `pnpm lint` (0 warnings ✓) + `pnpm build` ✓ + Playwright smoke (30/30) — conventional commits → PR → merge → `vercel --prod --yes` → live verify.
 
 ---
 

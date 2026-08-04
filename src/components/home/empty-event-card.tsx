@@ -8,10 +8,10 @@ export default function EmptyEventCard({
   hint?: string;
 }) {
   return (
-    <div className='flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-ink/10 bg-white/60 px-8 py-16 text-center'>
-      <CalendarX size={44} weight='light' className='mb-4 text-aurora-400' />
-      <p className='text-lg font-medium text-ink'>{message}</p>
-      <p className='mt-1 text-sm text-ink/50'>{hint}</p>
+    <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line/20 bg-surface-2/60 px-8 py-16 text-center">
+      <CalendarX size={44} weight="light" className="mb-4 text-aurora-400" />
+      <p className="text-lg font-medium text-ink">{message}</p>
+      <p className="mt-1 text-sm text-ink/50">{hint}</p>
     </div>
   );
 }
