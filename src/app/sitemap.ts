@@ -29,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8
+    },
+    {
+      url: `${BASE_URL}/events/archive`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.5
     }
   ];
 }

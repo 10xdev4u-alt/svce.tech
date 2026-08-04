@@ -1,4 +1,15 @@
 import type { Event } from '@/types/event';
+import { getEventEndDate } from './events';
+
+/**
+ * Keep events that haven't ended yet plus a grace window after they finish,
+ * so subscribed calendars stop broadcasting events once they're old news.
+ * Defaults to 48 hours past the end of the event.
+ */
+export function filterFeedEvents(events: Event[], now: Date, graceHours = 48): Event[] {
+  const cutoff = new Date(now.getTime() - graceHours * 3_600_000);
+  return events.filter((event) => getEventEndDate(event).getTime() >= cutoff.getTime());
+}
 
 /**
  * Build a complete iCalendar (.ics) document from a list of events.

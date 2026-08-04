@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Event } from '@/types/event';
-import { buildIcs } from './ical';
+import { buildIcs, filterFeedEvents } from './ical';
 import { buildRss } from './rss';
 
 function makeEvent(overrides: Partial<Event> = {}): Event {
@@ -55,6 +55,38 @@ describe('buildIcs', () => {
     const uidA = a.match(/UID:(.*)@svce\.tech/)?.[0];
     const uidB = b.match(/UID:(.*)@svce\.tech/)?.[0];
     expect(uidA).toBe(uidB);
+  });
+});
+
+describe('filterFeedEvents', () => {
+  const now = new Date(2026, 7, 20, 12, 0, 0); // 20 Aug 2026 12:00 local
+
+  it('keeps events that have not happened yet', () => {
+    const upcoming = makeEvent({ eventDate: '2026-08-25' });
+    expect(filterFeedEvents([upcoming], now)).toHaveLength(1);
+  });
+
+  it('keeps events that ended within the 48h grace window', () => {
+    const justEnded = makeEvent({
+      eventDate: '2026-08-19',
+      eventTime: '10:00',
+      eventEndTime: '12:00'
+    });
+    expect(filterFeedEvents([justEnded], now)).toHaveLength(1);
+  });
+
+  it('drops events that ended longer ago than the grace window', () => {
+    const old = makeEvent({ eventDate: '2026-08-01' });
+    expect(filterFeedEvents([old], now)).toHaveLength(0);
+  });
+
+  it('honours a custom grace window', () => {
+    const endedYesterday = makeEvent({
+      eventDate: '2026-08-19',
+      eventTime: '10:00',
+      eventEndTime: '12:00'
+    });
+    expect(filterFeedEvents([endedYesterday], now, 6)).toHaveLength(0);
   });
 });
 
