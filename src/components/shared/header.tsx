@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import PushSubscribe from '../PushSubscribe';
+import SearchPalette from '../search/search-palette';
 
 const navLinks = [
   { href: '/', label: 'Events' },
@@ -32,6 +33,7 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <SearchPalette />
           {/* Single PushSubscribe instance — never render it twice */}
           <PushSubscribe />
           <a
