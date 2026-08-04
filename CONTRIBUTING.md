@@ -3,6 +3,15 @@
 Thanks for helping grow the SVCE tech community! Adding events, clubs, or opportunities is designed
 to take **2 minutes** — no complex setup, just a JSON edit and a pull request.
 
+## 🗺️ The contribution flow
+
+1. **Suggest it** — open an issue using the [**Add an Event**](.github/ISSUE_TEMPLATE/add-event.yml) form
+   (or go straight to step 2 if you're ready).
+2. Fork → edit a JSON file in `src/data/` → open a pull request.
+3. GitHub checks it automatically: **CI** (validate + lint + build), **PR title** (must be conventional),
+   **Vercel preview** — and **CodeRabbit** reviews the code.
+4. Checks pass → merge → it's live on the site. No maintainer babysitting needed.
+
 ## 🚀 Quick Start (Add an Event)
 
 1. Fork this repo
@@ -79,9 +88,9 @@ Append to `src/data/opportunities.json`:
 - [ ] Run `pnpm validate:data` — this checks dates, links, and field schemas
 
 > CI runs `pnpm validate:data`, `pnpm lint` and `pnpm build` on every pull request, so a bad
-> entry can never break the site.
+> entry can never break the site. A non-conventional PR title is rejected automatically.
 
-## 💬 Commit Message Style
+## 💬 Commit & PR Title Style
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -90,6 +99,9 @@ feat: add PULSE symposium event
 fix: correct workshop date
 docs: update contribution guide
 ```
+
+Both **commit messages** and **PR titles** follow this format (a CI check enforces the PR title).
+Keep them tight — 6-word style.
 
 ## 📝 License
 

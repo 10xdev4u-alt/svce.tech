@@ -2,7 +2,7 @@
 
 > **Purpose of this doc:** pick up work after a gap with zero context. Everything important about
 > what was built, how it works, what's broken, and what's next. Owner: 10xdev4u (git 10xdev4u-alt).
-> Last updated: 2026-08-04.
+> Last updated: 2026-08-05.
 
 ---
 
@@ -35,17 +35,18 @@ Deploy flow used every phase: **validate → lint → build → conventional com
 
 ---
 
-## 3. What's shipped (Phases 1–7)
+## 3. What's shipped (Phases 1–8)
 
-| Phase                         | What                                                                                                                                                                                                                                                                                                                     |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **1 · Core hub**              | Home (hero w/ live-computed stats, "this month" + "upcoming" events), Clubs directory (`/clubs`), design system "Campus Aurora", header/footer, not-found, error page                                                                                                                                                    |
-| **2 · Contribution engine**   | Data validation script (`scripts/validate-data.mjs`, timezone-safe date checks), wired into lint-staged + CI, CONTRIBUTING.md                                                                                                                                                                                            |
-| **3 · Push notifications**    | Bell (single instance) + 6s prompt, service worker, hashed API routes, private subscriptions repo, 2 workflows, VAPID/GH secrets. **See §6 — was broken, now proven fixed**                                                                                                                                              |
-| **4 · Event UX**              | Clickable cards → detail modal (register, add-to-calendar, share, copy, WhatsApp), calendar view (multi-day aware), community/location filters, cards↔calendar toggle, a11y pass                                                                                                                                        |
-| **5 · Resources & placement** | `/resources` — 21 real resources (off-campus/job-fairs, DSA, interview, aptitude, resume, open-source, courses), category filter chips, contribute callout. **No SVCE placement stuff**                                                                                                                                  |
-| **6 · Search & SEO**          | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts`                                                                                                                                                                       |
-| **7 · Mobile & dark mode**    | **Shipped 2026-08-04.** Semantic design tokens (`--surface`/`--surface-2`/`--ink`/`--line`/`--overlay`/`--on-accent`) + class-based `.dark`, FOUC-safe inline theme script + sun/moon toggle (OS-aware, pinned override), hamburger mobile nav (sheet below `lg`), global `:focus-visible` ring, mobile select-width fix |
+| Phase                          | What                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1 · Core hub**               | Home (hero w/ live-computed stats, "this month" + "upcoming" events), Clubs directory (`/clubs`), design system "Campus Aurora", header/footer, not-found, error page                                                                                                                                                                                                                                                       |
+| **2 · Contribution engine**    | Data validation script (`scripts/validate-data.mjs`, timezone-safe date checks), wired into lint-staged + CI, CONTRIBUTING.md                                                                                                                                                                                                                                                                                               |
+| **3 · Push notifications**     | Bell (single instance) + 6s prompt, service worker, hashed API routes, private subscriptions repo, 2 workflows, VAPID/GH secrets. **See §6 — was broken, now proven fixed**                                                                                                                                                                                                                                                 |
+| **4 · Event UX**               | Clickable cards → detail modal (register, add-to-calendar, share, copy, WhatsApp), calendar view (multi-day aware), community/location filters, cards↔calendar toggle, a11y pass                                                                                                                                                                                                                                           |
+| **5 · Resources & placement**  | `/resources` — 21 real resources (off-campus/job-fairs, DSA, interview, aptitude, resume, open-source, courses), category filter chips, contribute callout. **No SVCE placement stuff**                                                                                                                                                                                                                                     |
+| **6 · Search & SEO**           | Global **⌘K** search palette (events/clubs/opportunities/resources, keyboard nav, event results open the detail modal), `robots.ts` + `sitemap.ts`                                                                                                                                                                                                                                                                          |
+| **7 · Mobile & dark mode**     | **Shipped 2026-08-04.** Semantic design tokens (`--surface`/`--surface-2`/`--ink`/`--line`/`--overlay`/`--on-accent`) + class-based `.dark`, FOUC-safe inline theme script + sun/moon toggle (OS-aware, pinned override), hamburger mobile nav (sheet below `lg`), global `:focus-visible` ring, mobile select-width fix                                                                                                    |
+| **8 · Community & flow locks** | **Shipped 2026-08-05.** PR-driven workflow enforced end-to-end: branch protection on `main` (strict, enforce-admins, requires CI + title check + Vercel), semantic-PR-title CI gate, PR template, Dependabot (weekly npm + actions), CodeRabbit review bot + config, issue templates (add-event/bug/feature), CONTRIBUTING flow section, dependabot ignore rules for coupled majors (eslint-config-next ≥16, typescript ≥6) |
 
 **Also fixed along the way:** sunrise palette shades 600–900 were missing (white text on light-orange chips in dark mode — root cause of a visible bug), notification popup was rendering against the header (`backdrop-filter` containing block) → fixed via portal to `document.body`.
 
@@ -95,10 +96,12 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ## 5. Contribution model (what "anyone can contribute" means)
 
-1. Fork → edit a JSON file in `src/data/` → PR.
-2. CI runs `validate:data` + lint + build; lint-staged runs on commit locally.
-3. Data schemas enforced by `scripts/validate-data.mjs` (duplicate names/dates rejected, URL checks, date/time format, category whitelists).
-4. `CONTRIBUTING.md` has templates. README features list **now includes Resources** (added in Phase 7).
+1. Suggest it: open an issue via the **Add an Event / Bug Report / Feature Request** forms (`.github/ISSUE_TEMPLATE/`) — or skip ahead if you're ready.
+2. Fork → edit a JSON file in `src/data/` → PR.
+3. CI runs `validate:data` + lint + build + **PR-title check** (conventional titles enforced at the PR level); lint-staged runs on commit locally.
+4. Data schemas enforced by `scripts/validate-data.mjs` (duplicate names/dates rejected, URL checks, date/time format, category whitelists).
+5. `CONTRIBUTING.md` has the flow + templates. README features list **includes Resources** (added in Phase 7).
+6. `main` is **branch-protected**: only PRs with green CI + title check + Vercel deploy merge (CodeRabbit reviews advisory).
 
 ---
 
@@ -136,12 +139,12 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ## 8. Roadmap — remaining phases
 
-| Phase                         | Scope                                                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------- |
-| **7 · Mobile & dark mode**    | ✅ **Shipped 2026-08-04** — tokens, OS-aware toggle, hamburger nav                                    |
-| **8 · Community & docs**      | CONTRIBUTING polish, PR template, "good first issue" labels, README features += Resources             |
-| **9 · Testing & reliability** | Unit tests for `lib/events.ts` + `scripts/validate-data.mjs`, Playwright E2E wired into CI            |
-| **10 · Growth**               | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror |
+| Phase                          | Scope                                                                                                                              |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **7 · Mobile & dark mode**     | ✅ **Shipped 2026-08-04** — tokens, OS-aware toggle, hamburger nav                                                                 |
+| **8 · Community & flow locks** | ✅ **Shipped 2026-08-05** — PR template, branch protection, title gate, Dependabot, CodeRabbit, issue templates, CONTRIBUTING flow |
+| **9 · Testing & reliability**  | Unit tests for `lib/events.ts` + `scripts/validate-data.mjs`, Playwright E2E wired into CI                                         |
+| **10 · Growth**                | Per-event "remind me" push, iCal/calendar feed, RSS, past-events archive, Telegram/Discord bot mirror                              |
 
 ---
 
@@ -170,7 +173,25 @@ docs/           push-notifications.md · state-of-the-project.md (this file)
 
 ---
 
-## 10. House rules (the owner's non-negotiables)
+## 10. PHASE 8 — What was locked (shipped 2026-08-05)
+
+**Goal:** turn the "good practice" PR flow into an **enforced pipeline** so the repo can't be bypassed.
+
+- [x] **Branch protection on `main`** — strict (`required_status_checks.strict: true`), enforce-admins, requires `Lint, validate data & build` + `Validate PR title` + `Vercel`. Verified live: direct `git push origin main` → `GH006 Protected branch update failed`.
+- [x] **Semantic PR title gate** — `amannn/action-semantic-pull-request` (runs via `pull_request_target` from `main`, so untrusted forks can't tamper with it). Non-conventional titles are blocked.
+- [x] **PR template** — `.github/PULL_REQUEST_TEMPLATE.md` (what / test plan / conventional-title reminder).
+- [x] **Dependabot** — weekly `npm` + `github-actions` updates, conventional `chore(deps)` messages, `dependencies` label, `open-pull-requests-limit: 5`. **Ignore rules added for coupled majors:** `eslint-config-next >=16` (needs Next 16) and `typescript >=6` (rejects CSS side-effect imports) — both broke CI when auto-bumped.
+- [x] **CodeRabbit** — configured (`.coderabbit.yaml`), reviews every PR; **advisory** (not a required check — it rate-limits on the free plan and would block Dependabot merges). `auto_pause_after_reviewed_commits: 3` keeps free-plan quota alive on busy branches.
+- [x] **Issue templates** — `.github/ISSUE_TEMPLATE/`: `add-event.yml` (JSON-fields form, this repo's whole contribution model), `bug-report.yml`, `feature-request.yml`, `config.yml` (good-first-issue, help-wanted links).
+- [x] **CONTRIBUTING.md flow section** — "The contribution flow" + note that PR titles are enforced, 6-word style.
+- [x] **Auto-merge + delete-branch-on-merge** repo settings enabled.
+- [x] **Dependabot sweep 2026-08-05:** 8/10 PRs merged (lint-staged 17, commitlint 21, @types/node 26, actions v7/v5, prettier 3.9.6, prettier-plugin-tailwindcss 0.8.1, amannn v6); #9 (eslint-config-next 16) and #10 (typescript 6) closed as genuine breaks + ignore rules added.
+
+**Gotcha:** with `strict: true`, Dependabot PRs go `BEHIND` after each merge → always `gh pr update-branch` before merging, then wait for re-checks. Lockfile conflicts on rebase: regenerate with `pnpm install --lockfile-only` (never `git checkout --theirs` + `git add -A` blind — it can commit conflict markers; verify with `grep -c '<<<<<<<' package.json`).
+
+---
+
+## 11. House rules (the owner's non-negotiables)
 
 - **NO AI-generated/fabricated data.** Every event/opportunity/resource is real & verified (real links). SVCE-specific _placement_ links are banned ("SVCE sucks at placements" — keep resources general: off-campus, job fairs, prep).
 - Conventional commits only, keep them tight (6-word style), push straight to `main`.
