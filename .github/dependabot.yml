@@ -20,6 +20,12 @@ updates:
       # TypeScript 6 rejects CSS side-effect imports; upgrade deliberately
       - dependency-name: 'typescript'
         versions: ['>=6']
+      # Next 16 removes `next lint`; upgrade deliberately with lint migration
+      - dependency-name: 'next'
+        versions: ['>=16']
+      # Tailwind 4 is CSS-first (plugin moved to @tailwindcss/postcss); config rewrite needed
+      - dependency-name: 'tailwindcss'
+        versions: ['>=4']
 
   # GitHub Actions workflows themselves
   - package-ecosystem: 'github-actions'
