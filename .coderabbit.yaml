@@ -4,7 +4,7 @@
 language: 'en-US'
 early_access: false
 
-tone: "Keep reviews concise and friendly. Suggest fixes phrased in the project's tight 6-word conventional-commit style."
+tone_instructions: "Keep reviews concise and friendly. Suggest fixes phrased in the project's tight 6-word conventional-commit style."
 
 reviews:
   # Assertive: catches correctness + style issues, not just nits
@@ -39,15 +39,13 @@ reviews:
     title:
       mode: warning
       requirements: 'Use conventional commits format (type: description), concise, ideally under 60 characters.'
+  tools:
+    actionlint:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
 
 chat:
   auto_reply: true
-  auto_reply_all_threads: false
-
-tools:
-  actionlint:
-    enabled: true
-  markdownlint:
-    enabled: true
-  yamllint:
-    enabled: true
