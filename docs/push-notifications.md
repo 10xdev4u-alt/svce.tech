@@ -78,6 +78,28 @@ client-side SW timers are unreliable, so a **GitHub Actions cron workflow** does
 - Reminders are pruned by the same workflow (a failed/expired reminder file stays until due).
 - Cron min granularity is 5 min; GitHub pauses cron after 60 days of repo inactivity.
 
+## Discord mirror (Phase 10)
+
+Every upcoming event (next 14 days) is posted to the community Discord channel as an embed.
+Because Discord webhooks support **editing** their own messages, updates to an event's details
+patch the same message in place — no duplicate announcements. State (uid → messageId + content
+hash) lives in the private subscriptions repo as `discord-state.json`.
+
+```
+[Every 6h + on push to events.json]
+  → mirror-discord.yml
+  → checkout repo + private subs repo (state)
+  → node scripts/mirror-discord.mjs
+     → upcoming events → embeds (≤10 per message, 500ms between calls)
+     → new: POST embed · changed: PATCH in place · over: prune state
+  → commit discord-state.json back to subs repo
+```
+
+- Needs `DISCORD_WEBHOOK_URL` (GitHub secret) — create the webhook in your Discord channel first.
+- Run `node scripts/mirror-discord.mjs --events src/data/events.json --state <file> --dry-run`
+  to preview what would be posted without sending anything.
+- Slash commands (/events, /upcoming) are a planned follow-up via a Discord interactions endpoint.
+
 ## Files
 
 - `src/components/PushSubscribe.tsx` — bell button + prompt (single instance)
@@ -93,6 +115,8 @@ client-side SW timers are unreliable, so a **GitHub Actions cron workflow** does
 - `.github/workflows/manage-reminders.yml` — save/remove reminder files in subs repo
 - `.github/workflows/send-notifications.yml` — send to all subscribers + prune 410s
 - `.github/workflows/send-reminders.yml` — cron sender for due reminders
+- `.github/workflows/mirror-discord.yml` — cron + push mirror of events to the Discord webhook
+- `scripts/mirror-discord.mjs` — pure embed/plan logic + CLI (dry-run supported)
 
 ## Notes
 
