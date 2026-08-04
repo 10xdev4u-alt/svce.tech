@@ -1,0 +1,149 @@
+[
+  {
+    "title": "Internshala",
+    "category": "offcampus",
+    "description": "India's go-to platform for internships, off-campus jobs and training — filter by role, stipend and work-from-home.",
+    "link": "https://internshala.com",
+    "tags": ["internships", "off-campus", "jobs"]
+  },
+  {
+    "title": "Naukri",
+    "category": "offcampus",
+    "description": "One of India's largest job portals — set up a profile, upload your resume and let recruiters find you.",
+    "link": "https://www.naukri.com",
+    "tags": ["jobs", "off-campus", "recruitment"]
+  },
+  {
+    "title": "LinkedIn Jobs",
+    "category": "offcampus",
+    "description": "Company pages, easy-apply listings and direct recruiter DMs — the most used channel for off-campus hiring.",
+    "link": "https://www.linkedin.com/jobs",
+    "tags": ["jobs", "networking", "off-campus"]
+  },
+  {
+    "title": "Unstop",
+    "category": "offcampus",
+    "description": "Hackathons, competitions, job fairs and campus drives from top companies — one stop for talent hunts.",
+    "link": "https://unstop.com",
+    "tags": ["job fairs", "hackathons", "competitions"]
+  },
+  {
+    "title": "Wellfound",
+    "category": "offcampus",
+    "description": "Startup-focused jobs — apply directly to fast-growing companies, many open to freshers off campus.",
+    "link": "https://wellfound.com",
+    "tags": ["startups", "jobs", "off-campus"]
+  },
+  {
+    "title": "LeetCode",
+    "category": "dsa",
+    "description": "Practice problems, company-tagged questions, weekly contests and interview study plans.",
+    "link": "https://leetcode.com",
+    "tags": ["dsa", "coding", "interviews"]
+  },
+  {
+    "title": "NeetCode",
+    "category": "dsa",
+    "description": "Free DSA roadmap (the famous NeetCode 150) with beginner-friendly video explanations.",
+    "link": "https://neetcode.io",
+    "tags": ["dsa", "roadmap", "videos"]
+  },
+  {
+    "title": "GeeksforGeeks",
+    "category": "dsa",
+    "description": "Tutorials, practice problems, and interview experiences — the classic Indian engineering prep staple.",
+    "link": "https://www.geeksforgeeks.org",
+    "tags": ["dsa", "tutorials", "interview prep"]
+  },
+  {
+    "title": "InterviewBit",
+    "category": "interview",
+    "description": "Structured coding interview course with company-specific question sets and mock interviews.",
+    "link": "https://www.interviewbit.com",
+    "tags": ["interviews", "coding", "company questions"]
+  },
+  {
+    "title": "Pramp",
+    "category": "interview",
+    "description": "Free live mock interviews with real peers — practice technical and behavioral rounds for free.",
+    "link": "https://www.pramp.com",
+    "tags": ["mock interviews", "practice", "peers"]
+  },
+  {
+    "title": "IndiaBix",
+    "category": "aptitude",
+    "description": "Quantitative aptitude, logical reasoning and verbal ability — the core of most placement test rounds.",
+    "link": "https://www.indiabix.com",
+    "tags": ["aptitude", "reasoning", "placement tests"]
+  },
+  {
+    "title": "PrepInsta",
+    "category": "aptitude",
+    "description": "Aptitude, reasoning and company-specific placement test patterns with solved examples.",
+    "link": "https://prepinsta.com",
+    "tags": ["aptitude", "company patterns", "placement"]
+  },
+  {
+    "title": "FlowCV",
+    "category": "resume",
+    "description": "Free, ATS-friendly resume builder with clean templates and direct PDF export.",
+    "link": "https://flowcv.com",
+    "tags": ["resume", "ats", "builder"]
+  },
+  {
+    "title": "Novoresume",
+    "category": "resume",
+    "description": "Modern resume builder with recruiter-approved templates and cover letter tools.",
+    "link": "https://novoresume.com",
+    "tags": ["resume", "cover letter", "templates"]
+  },
+  {
+    "title": "Overleaf Resume Templates",
+    "category": "resume",
+    "description": "LaTeX resume and CV templates — the clean, professional format devs love (Jake's Resume is a classic).",
+    "link": "https://www.overleaf.com/latex/templates",
+    "tags": ["latex", "resume", "cv"]
+  },
+  {
+    "title": "GitHub Student Developer Pack",
+    "category": "opensource",
+    "description": "Free tools, credits and services for students — includes pro-tier dev tools used on real projects.",
+    "link": "https://education.github.com/pack",
+    "tags": ["free tools", "students", "developer"]
+  },
+  {
+    "title": "First Contributions",
+    "category": "opensource",
+    "description": "Practice making your very first open-source pull request — the friendliest way to learn Git.",
+    "link": "https://firstcontributions.github.io",
+    "tags": ["open source", "git", "beginners"]
+  },
+  {
+    "title": "Good First Issue",
+    "category": "opensource",
+    "description": "A curated list of beginner-friendly issues from real projects — find your first contribution.",
+    "link": "https://goodfirstissue.dev",
+    "tags": ["open source", "beginner issues", "contribute"]
+  },
+  {
+    "title": "freeCodeCamp",
+    "category": "courses",
+    "description": "Thousands of hours of free coding lessons with industry-recognized certifications.",
+    "link": "https://www.freecodecamp.org",
+    "tags": ["courses", "certifications", "free"]
+  },
+  {
+    "title": "NPTEL",
+    "category": "courses",
+    "description": "Free IIT courses with optional certified exams — great for strong fundamentals and extra credits.",
+    "link": "https://nptel.ac.in",
+    "tags": ["courses", "iit", "certificates"]
+  },
+  {
+    "title": "CS50",
+    "category": "courses",
+    "description": "Harvard's legendary introduction to computer science — completely free, self-paced.",
+    "link": "https://cs50.harvard.edu",
+    "tags": ["cs50", "harvard", "cs fundamentals"]
+  }
+]
