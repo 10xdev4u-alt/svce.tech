@@ -1,6 +1,9 @@
 import type { Config } from 'tailwindcss';
 
 export default {
+  // Class-based dark mode so the manual toggle (.dark on <html>) can override
+  // the OS preference instead of relying on the (removed) media query.
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx,md,mdx}'],
   theme: {
     extend: {
@@ -33,11 +36,19 @@ export default {
           800: '#92400e',
           900: '#78350f'
         },
-        ink: '#0f172a'
+        ink: 'rgb(var(--ink) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'surface-2': 'rgb(var(--surface-2) / <alpha-value>)',
+        'surface-3': 'rgb(var(--surface-3) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        overlay: 'rgb(var(--overlay) / <alpha-value>)',
+        'on-accent': 'rgb(var(--on-accent) / <alpha-value>)'
       },
       backgroundImage: {
         'aurora-hero':
           'linear-gradient(135deg, #fff7ed 0%, #fef3c7 25%, #dcfce7 60%, #bbf7d0 100%)',
+        'aurora-hero-dark':
+          'linear-gradient(135deg, #1c1917 0%, #422006 25%, #052e16 60%, #022c22 100%)',
         'aurora-glow':
           'radial-gradient(ellipse at top, rgba(251,191,36,0.25) 0%, rgba(74,222,128,0.25) 45%, transparent 70%)'
       },

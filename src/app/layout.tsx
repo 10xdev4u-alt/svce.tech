@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import Header from '../components/shared/header';
 import Footer from '../components/shared/footer';
+import { themeInitScript } from '../lib/theme';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -54,8 +55,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} bg-[#fbfbf7] font-sans antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} bg-surface font-sans antialiased`}
+      >
         <Header />
         <main>{children}</main>
         <Footer />
