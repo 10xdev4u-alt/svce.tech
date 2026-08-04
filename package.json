@@ -1,6 +1,7 @@
 {
   "name": "svce-tech",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "A community hub for discovering tech events, clubs, and opportunities around Sri Venkateswara College of Engineering (SVCE), Sriperumbudur.",
   "private": true,
